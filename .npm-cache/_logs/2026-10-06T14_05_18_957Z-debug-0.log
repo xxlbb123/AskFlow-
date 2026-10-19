@@ -1,0 +1,370 @@
+0 verbose cli C:\Program Files\nodejs\node.exe C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js
+1 info using npm@10.9.8
+2 info using node@v22.23.1
+3 silly config load:file:G:\nodejs\nvm\v22.23.1\node_modules\npm\npmrc
+4 silly config load:file:F:\AI Chat\yuan-chat-vue\.npmrc
+5 silly config load:file:C:\Users\29227\.npmrc
+6 silly config load:file:C:\Program Files\nodejs\etc\npmrc
+7 verbose title npm install
+8 verbose argv "install" "--package-lock-only" "--ignore-scripts" "--no-audit" "--no-fund" "--registry" "https://registry.npmmirror.com" "--cache" "F:\\AI Chat\\.npm-cache" "--fetch-retries" "1" "--fetch-timeout" "15000"
+9 verbose logfile logs-max:10 dir:F:\AI Chat\.npm-cache\_logs\2026-10-06T14_05_18_957Z-
+10 verbose logfile F:\AI Chat\.npm-cache\_logs\2026-10-06T14_05_18_957Z-debug-0.log
+11 silly logfile done cleaning log files
+12 silly packumentCache heap:4345298944 maxSize:1086324736 maxEntrySize:543162368
+13 silly idealTree buildDeps
+14 silly fetch manifest @tailwindcss/vite@^4.3.3
+15 silly packumentCache full:https://registry.npmmirror.com/@tailwindcss%2fvite cache-miss
+16 http fetch GET 200 https://registry.npmmirror.com/npm 245ms
+17 http fetch GET https://registry.npmmirror.com/@tailwindcss%2fvite attempt 1 failed with ETIMEDOUT
+18 http fetch GET 200 https://registry.npmmirror.com/@tailwindcss%2fvite 31406ms attempt #2 (cache miss)
+19 silly packumentCache full:https://registry.npmmirror.com/@tailwindcss%2fvite set size:360919 disposed:false
+20 silly fetch manifest vite@^7.2.4
+21 silly packumentCache full:https://registry.npmmirror.com/vite cache-miss
+22 http fetch GET 200 https://registry.npmmirror.com/vite 592ms (cache miss)
+23 silly packumentCache full:https://registry.npmmirror.com/vite set size:6256847 disposed:false
+24 silly fetch manifest @types/node@^20.19.0 || >=22.12.0
+25 silly packumentCache full:https://registry.npmmirror.com/@types%2fnode cache-miss
+26 http fetch GET 200 https://registry.npmmirror.com/@types%2fnode 111ms (cache miss)
+27 silly packumentCache full:https://registry.npmmirror.com/@types%2fnode set size:1179358 disposed:false
+28 silly fetch manifest jiti@>=1.21.0
+29 silly packumentCache full:https://registry.npmmirror.com/jiti cache-miss
+30 http fetch GET 200 https://registry.npmmirror.com/jiti 52ms (cache miss)
+31 silly packumentCache full:https://registry.npmmirror.com/jiti set size:61717 disposed:false
+32 silly fetch manifest less@^4.0.0
+33 silly packumentCache full:https://registry.npmmirror.com/less cache-miss
+34 http fetch GET 200 https://registry.npmmirror.com/less 274ms (cache miss)
+35 silly packumentCache full:https://registry.npmmirror.com/less set size:66084 disposed:false
+36 silly fetch manifest lightningcss@^1.21.0
+37 silly packumentCache full:https://registry.npmmirror.com/lightningcss cache-miss
+38 http fetch GET 200 https://registry.npmmirror.com/lightningcss 53ms (cache miss)
+39 silly packumentCache full:https://registry.npmmirror.com/lightningcss set size:32915 disposed:false
+40 silly fetch manifest sass@^1.105.1
+41 silly packumentCache full:https://registry.npmmirror.com/sass cache-miss
+42 http fetch GET 200 https://registry.npmmirror.com/sass 30ms (cache miss)
+43 silly packumentCache full:https://registry.npmmirror.com/sass set size:131704 disposed:false
+44 silly fetch manifest sass-embedded@^1.70.0
+45 silly packumentCache full:https://registry.npmmirror.com/sass-embedded cache-miss
+46 http fetch GET 200 https://registry.npmmirror.com/sass-embedded 25ms (cache miss)
+47 silly packumentCache full:https://registry.npmmirror.com/sass-embedded set size:79854 disposed:false
+48 silly fetch manifest stylus@>=0.54.8
+49 silly packumentCache full:https://registry.npmmirror.com/stylus cache-miss
+50 http fetch GET 200 https://registry.npmmirror.com/stylus 580ms (cache miss)
+51 silly packumentCache full:https://registry.npmmirror.com/stylus set size:65242 disposed:false
+52 silly fetch manifest sugarss@^5.0.0
+53 silly packumentCache full:https://registry.npmmirror.com/sugarss cache-miss
+54 http fetch GET 200 https://registry.npmmirror.com/sugarss 41ms (cache miss)
+55 silly packumentCache full:https://registry.npmmirror.com/sugarss set size:8151 disposed:false
+56 silly fetch manifest postcss@^8.3.3
+57 silly packumentCache full:https://registry.npmmirror.com/postcss cache-miss
+58 http fetch GET 200 https://registry.npmmirror.com/postcss 37ms (cache miss)
+59 silly packumentCache full:https://registry.npmmirror.com/postcss set size:104323 disposed:false
+60 silly fetch manifest terser@^5.16.0
+61 silly packumentCache full:https://registry.npmmirror.com/terser cache-miss
+62 http fetch GET 200 https://registry.npmmirror.com/terser 32ms (cache miss)
+63 silly packumentCache full:https://registry.npmmirror.com/terser set size:115805 disposed:false
+64 silly fetch manifest tsx@^4.8.1
+65 silly packumentCache full:https://registry.npmmirror.com/tsx cache-miss
+66 http fetch GET 200 https://registry.npmmirror.com/tsx 35ms (cache miss)
+67 silly packumentCache full:https://registry.npmmirror.com/tsx set size:77498 disposed:false
+68 silly fetch manifest yaml@^2.4.2
+69 silly packumentCache full:https://registry.npmmirror.com/yaml cache-miss
+70 http fetch GET 200 https://registry.npmmirror.com/yaml 284ms (cache miss)
+71 silly packumentCache full:https://registry.npmmirror.com/yaml set size:59181 disposed:false
+72 silly fetch manifest tailwindcss@^4.3.3
+73 silly packumentCache full:https://registry.npmmirror.com/tailwindcss cache-miss
+74 http fetch GET 200 https://registry.npmmirror.com/tailwindcss 128ms (cache miss)
+75 silly packumentCache full:https://registry.npmmirror.com/tailwindcss set size:1694980 disposed:false
+76 silly placeDep ROOT @tailwindcss/vite@4.3.3 OK for: yuan-chat-vue@0.0.0 want: ^4.3.3
+77 silly placeDep ROOT sass@1.105.1 OK for: yuan-chat-vue@0.0.0 want: ^1.105.1
+78 silly placeDep ROOT tailwindcss@4.3.3 OK for: yuan-chat-vue@0.0.0 want: ^4.3.3
+79 silly fetch manifest @tailwindcss/oxide@4.3.3
+80 silly packumentCache full:https://registry.npmmirror.com/@tailwindcss%2foxide cache-miss
+81 silly fetch manifest @tailwindcss/node@4.3.3
+82 silly packumentCache full:https://registry.npmmirror.com/@tailwindcss%2fnode cache-miss
+83 silly fetch manifest tailwindcss@4.3.3
+84 silly packumentCache full:https://registry.npmmirror.com/tailwindcss cache-miss
+85 silly fetch manifest chokidar@^5.0.0
+86 silly packumentCache full:https://registry.npmmirror.com/chokidar cache-miss
+87 silly fetch manifest immutable@^5.1.5
+88 silly packumentCache full:https://registry.npmmirror.com/immutable cache-miss
+89 silly fetch manifest @parcel/watcher@^2.4.1
+90 silly packumentCache full:https://registry.npmmirror.com/@parcel%2fwatcher cache-miss
+91 http cache https://registry.npmmirror.com/tailwindcss 38ms (cache hit)
+92 silly packumentCache full:https://registry.npmmirror.com/tailwindcss set size:10900158 disposed:false
+93 http fetch GET 200 https://registry.npmmirror.com/@tailwindcss%2foxide 135ms (cache miss)
+94 silly packumentCache full:https://registry.npmmirror.com/@tailwindcss%2foxide set size:706590 disposed:false
+95 http fetch GET 200 https://registry.npmmirror.com/@parcel%2fwatcher 164ms (cache miss)
+96 silly packumentCache full:https://registry.npmmirror.com/@parcel%2fwatcher set size:24500 disposed:false
+97 http fetch GET 200 https://registry.npmmirror.com/immutable 180ms (cache miss)
+98 silly packumentCache full:https://registry.npmmirror.com/immutable set size:57146 disposed:false
+99 http fetch GET 200 https://registry.npmmirror.com/chokidar 362ms (cache miss)
+100 silly packumentCache full:https://registry.npmmirror.com/chokidar set size:40008 disposed:false
+101 http fetch GET 200 https://registry.npmmirror.com/@tailwindcss%2fnode 495ms (cache miss)
+102 silly packumentCache full:https://registry.npmmirror.com/@tailwindcss%2fnode set size:339915 disposed:false
+103 silly placeDep ROOT @tailwindcss/node@4.3.3 OK for: @tailwindcss/vite@4.3.3 want: 4.3.3
+104 silly placeDep ROOT @tailwindcss/oxide@4.3.3 OK for: @tailwindcss/vite@4.3.3 want: 4.3.3
+105 silly fetch manifest @jridgewell/remapping@^2.3.5
+106 silly packumentCache full:https://registry.npmmirror.com/@jridgewell%2fremapping cache-miss
+107 silly fetch manifest enhanced-resolve@^5.24.1
+108 silly packumentCache full:https://registry.npmmirror.com/enhanced-resolve cache-miss
+109 silly fetch manifest jiti@^2.7.0
+110 silly packumentCache full:https://registry.npmmirror.com/jiti cache-hit
+111 silly fetch manifest lightningcss@1.32.0
+112 silly packumentCache full:https://registry.npmmirror.com/lightningcss cache-hit
+113 silly fetch manifest @tailwindcss/oxide-darwin-arm64@4.3.3
+114 silly packumentCache full:https://registry.npmmirror.com/@tailwindcss%2foxide-darwin-arm64 cache-miss
+115 silly fetch manifest @tailwindcss/oxide-linux-arm64-musl@4.3.3
+116 silly packumentCache full:https://registry.npmmirror.com/@tailwindcss%2foxide-linux-arm64-musl cache-miss
+117 silly fetch manifest @tailwindcss/oxide-linux-arm64-gnu@4.3.3
+118 silly packumentCache full:https://registry.npmmirror.com/@tailwindcss%2foxide-linux-arm64-gnu cache-miss
+119 silly fetch manifest @tailwindcss/oxide-linux-x64-musl@4.3.3
+120 silly packumentCache full:https://registry.npmmirror.com/@tailwindcss%2foxide-linux-x64-musl cache-miss
+121 silly fetch manifest @tailwindcss/oxide-linux-x64-gnu@4.3.3
+122 silly packumentCache full:https://registry.npmmirror.com/@tailwindcss%2foxide-linux-x64-gnu cache-miss
+123 silly fetch manifest @tailwindcss/oxide-wasm32-wasi@4.3.3
+124 silly packumentCache full:https://registry.npmmirror.com/@tailwindcss%2foxide-wasm32-wasi cache-miss
+125 silly fetch manifest @tailwindcss/oxide-freebsd-x64@4.3.3
+126 silly packumentCache full:https://registry.npmmirror.com/@tailwindcss%2foxide-freebsd-x64 cache-miss
+127 silly fetch manifest @tailwindcss/oxide-win32-arm64-msvc@4.3.3
+128 silly packumentCache full:https://registry.npmmirror.com/@tailwindcss%2foxide-win32-arm64-msvc cache-miss
+129 silly fetch manifest @tailwindcss/oxide-win32-x64-msvc@4.3.3
+130 silly packumentCache full:https://registry.npmmirror.com/@tailwindcss%2foxide-win32-x64-msvc cache-miss
+131 http fetch GET 200 https://registry.npmmirror.com/@jridgewell%2fremapping 29ms (cache miss)
+132 silly packumentCache full:https://registry.npmmirror.com/@jridgewell%2fremapping set size:6023 disposed:false
+133 silly fetch manifest @tailwindcss/oxide-linux-arm-gnueabihf@4.3.3
+134 silly packumentCache full:https://registry.npmmirror.com/@tailwindcss%2foxide-linux-arm-gnueabihf cache-miss
+135 http fetch GET 200 https://registry.npmmirror.com/enhanced-resolve 53ms (cache miss)
+136 silly packumentCache full:https://registry.npmmirror.com/enhanced-resolve set size:78006 disposed:false
+137 silly fetch manifest @tailwindcss/oxide-darwin-x64@4.3.3
+138 silly packumentCache full:https://registry.npmmirror.com/@tailwindcss%2foxide-darwin-x64 cache-miss
+139 http fetch GET 200 https://registry.npmmirror.com/@tailwindcss%2foxide-linux-arm-gnueabihf 78ms (cache miss)
+140 silly packumentCache full:https://registry.npmmirror.com/@tailwindcss%2foxide-linux-arm-gnueabihf set size:577781 disposed:false
+141 silly fetch manifest @tailwindcss/oxide-android-arm64@4.3.3
+142 silly packumentCache full:https://registry.npmmirror.com/@tailwindcss%2foxide-android-arm64 cache-miss
+143 http fetch GET 200 https://registry.npmmirror.com/@tailwindcss%2foxide-darwin-arm64 184ms (cache miss)
+144 silly packumentCache full:https://registry.npmmirror.com/@tailwindcss%2foxide-darwin-arm64 set size:580413 disposed:false
+145 http fetch GET 200 https://registry.npmmirror.com/@tailwindcss%2foxide-darwin-x64 149ms (cache miss)
+146 silly packumentCache full:https://registry.npmmirror.com/@tailwindcss%2foxide-darwin-x64 set size:577922 disposed:false
+147 http fetch GET 200 https://registry.npmmirror.com/@tailwindcss%2foxide-linux-arm64-gnu 237ms (cache miss)
+148 silly packumentCache full:https://registry.npmmirror.com/@tailwindcss%2foxide-linux-arm64-gnu set size:579001 disposed:false
+149 http fetch GET 200 https://registry.npmmirror.com/@tailwindcss%2foxide-win32-x64-msvc 255ms (cache miss)
+150 silly packumentCache full:https://registry.npmmirror.com/@tailwindcss%2foxide-win32-x64-msvc set size:577900 disposed:false
+151 http fetch GET 200 https://registry.npmmirror.com/@tailwindcss%2foxide-linux-arm64-musl 361ms (cache miss)
+152 silly packumentCache full:https://registry.npmmirror.com/@tailwindcss%2foxide-linux-arm64-musl set size:578122 disposed:false
+153 http fetch GET 200 https://registry.npmmirror.com/@tailwindcss%2foxide-wasm32-wasi 466ms (cache miss)
+154 silly packumentCache full:https://registry.npmmirror.com/@tailwindcss%2foxide-wasm32-wasi set size:225386 disposed:false
+155 http fetch GET 200 https://registry.npmmirror.com/@tailwindcss%2foxide-android-arm64 355ms (cache miss)
+156 silly packumentCache full:https://registry.npmmirror.com/@tailwindcss%2foxide-android-arm64 set size:335771 disposed:false
+157 http fetch GET 200 https://registry.npmmirror.com/@tailwindcss%2foxide-freebsd-x64 520ms (cache miss)
+158 silly packumentCache full:https://registry.npmmirror.com/@tailwindcss%2foxide-freebsd-x64 set size:578295 disposed:false
+159 http fetch GET 200 https://registry.npmmirror.com/@tailwindcss%2foxide-win32-arm64-msvc 544ms (cache miss)
+160 silly packumentCache full:https://registry.npmmirror.com/@tailwindcss%2foxide-win32-arm64-msvc set size:335409 disposed:false
+161 http fetch GET 200 https://registry.npmmirror.com/@tailwindcss%2foxide-linux-x64-musl 568ms (cache miss)
+162 silly packumentCache full:https://registry.npmmirror.com/@tailwindcss%2foxide-linux-x64-musl set size:577351 disposed:false
+163 http fetch GET https://registry.npmmirror.com/@tailwindcss%2foxide-linux-x64-gnu attempt 1 failed with ETIMEDOUT
+164 http fetch GET 200 https://registry.npmmirror.com/@tailwindcss%2foxide-linux-x64-gnu 31461ms attempt #2 (cache miss)
+165 silly packumentCache full:https://registry.npmmirror.com/@tailwindcss%2foxide-linux-x64-gnu set size:576795 disposed:false
+166 silly placeDep ROOT @jridgewell/remapping@2.3.5 OK for: @tailwindcss/node@4.3.3 want: ^2.3.5
+167 silly placeDep ROOT enhanced-resolve@5.26.0 OK for: @tailwindcss/node@4.3.3 want: ^5.24.1
+168 silly placeDep ROOT jiti@2.7.0 OK for: @tailwindcss/node@4.3.3 want: ^2.7.0
+169 silly placeDep ROOT lightningcss@1.32.0 OK for: @tailwindcss/node@4.3.3 want: 1.32.0
+170 silly fetch manifest @jridgewell/gen-mapping@^0.3.5
+171 silly packumentCache full:https://registry.npmmirror.com/@jridgewell%2fgen-mapping cache-miss
+172 silly fetch manifest @jridgewell/trace-mapping@^0.3.24
+173 silly packumentCache full:https://registry.npmmirror.com/@jridgewell%2ftrace-mapping cache-miss
+174 silly fetch manifest tapable@^2.3.3
+175 silly packumentCache full:https://registry.npmmirror.com/tapable cache-miss
+176 silly fetch manifest graceful-fs@^4.2.4
+177 silly packumentCache full:https://registry.npmmirror.com/graceful-fs cache-miss
+178 silly fetch manifest detect-libc@^2.0.3
+179 silly packumentCache full:https://registry.npmmirror.com/detect-libc cache-miss
+180 silly fetch manifest lightningcss-darwin-x64@1.32.0
+181 silly packumentCache full:https://registry.npmmirror.com/lightningcss-darwin-x64 cache-miss
+182 silly fetch manifest lightningcss-linux-x64-gnu@1.32.0
+183 silly packumentCache full:https://registry.npmmirror.com/lightningcss-linux-x64-gnu cache-miss
+184 silly fetch manifest lightningcss-win32-x64-msvc@1.32.0
+185 silly packumentCache full:https://registry.npmmirror.com/lightningcss-win32-x64-msvc cache-miss
+186 silly fetch manifest lightningcss-win32-arm64-msvc@1.32.0
+187 silly packumentCache full:https://registry.npmmirror.com/lightningcss-win32-arm64-msvc cache-miss
+188 silly fetch manifest lightningcss-darwin-arm64@1.32.0
+189 silly packumentCache full:https://registry.npmmirror.com/lightningcss-darwin-arm64 cache-miss
+190 silly fetch manifest lightningcss-linux-arm64-gnu@1.32.0
+191 silly packumentCache full:https://registry.npmmirror.com/lightningcss-linux-arm64-gnu cache-miss
+192 http fetch GET 200 https://registry.npmmirror.com/@jridgewell%2fgen-mapping 35ms (cache miss)
+193 silly packumentCache full:https://registry.npmmirror.com/@jridgewell%2fgen-mapping set size:18327 disposed:false
+194 silly fetch manifest lightningcss-linux-arm-gnueabihf@1.32.0
+195 silly packumentCache full:https://registry.npmmirror.com/lightningcss-linux-arm-gnueabihf cache-miss
+196 http fetch GET 200 https://registry.npmmirror.com/@jridgewell%2ftrace-mapping 38ms (cache miss)
+197 silly packumentCache full:https://registry.npmmirror.com/@jridgewell%2ftrace-mapping set size:40595 disposed:false
+198 silly fetch manifest lightningcss-linux-arm64-musl@1.32.0
+199 silly packumentCache full:https://registry.npmmirror.com/lightningcss-linux-arm64-musl cache-miss
+200 http fetch GET 200 https://registry.npmmirror.com/detect-libc 69ms (cache miss)
+201 silly packumentCache full:https://registry.npmmirror.com/detect-libc set size:10958 disposed:false
+202 silly fetch manifest lightningcss-linux-x64-musl@1.32.0
+203 silly packumentCache full:https://registry.npmmirror.com/lightningcss-linux-x64-musl cache-miss
+204 http fetch GET 200 https://registry.npmmirror.com/lightningcss-darwin-x64 75ms (cache miss)
+205 silly packumentCache full:https://registry.npmmirror.com/lightningcss-darwin-x64 set size:21278 disposed:false
+206 silly fetch manifest lightningcss-freebsd-x64@1.32.0
+207 silly packumentCache full:https://registry.npmmirror.com/lightningcss-freebsd-x64 cache-miss
+208 http fetch GET 200 https://registry.npmmirror.com/lightningcss-linux-x64-gnu 87ms (cache miss)
+209 silly packumentCache full:https://registry.npmmirror.com/lightningcss-linux-x64-gnu set size:21440 disposed:false
+210 silly fetch manifest lightningcss-android-arm64@1.32.0
+211 silly packumentCache full:https://registry.npmmirror.com/lightningcss-android-arm64 cache-miss
+212 http fetch GET 200 https://registry.npmmirror.com/lightningcss-darwin-arm64 91ms (cache miss)
+213 silly packumentCache full:https://registry.npmmirror.com/lightningcss-darwin-arm64 set size:21170 disposed:false
+214 http fetch GET 200 https://registry.npmmirror.com/lightningcss-win32-arm64-msvc 97ms (cache miss)
+215 silly packumentCache full:https://registry.npmmirror.com/lightningcss-win32-arm64-msvc set size:6252 disposed:false
+216 http fetch GET 200 https://registry.npmmirror.com/lightningcss-linux-arm-gnueabihf 69ms (cache miss)
+217 silly packumentCache full:https://registry.npmmirror.com/lightningcss-linux-arm-gnueabihf set size:21566 disposed:false
+218 http fetch GET 200 https://registry.npmmirror.com/lightningcss-linux-arm64-musl 67ms (cache miss)
+219 silly packumentCache full:https://registry.npmmirror.com/lightningcss-linux-arm64-musl set size:21504 disposed:false
+220 http fetch GET 200 https://registry.npmmirror.com/lightningcss-linux-x64-musl 47ms (cache miss)
+221 silly packumentCache full:https://registry.npmmirror.com/lightningcss-linux-x64-musl set size:21742 disposed:false
+222 http fetch GET 200 https://registry.npmmirror.com/lightningcss-android-arm64 45ms (cache miss)
+223 silly packumentCache full:https://registry.npmmirror.com/lightningcss-android-arm64 set size:2598 disposed:false
+224 http fetch GET 200 https://registry.npmmirror.com/lightningcss-freebsd-x64 58ms (cache miss)
+225 silly packumentCache full:https://registry.npmmirror.com/lightningcss-freebsd-x64 set size:9744 disposed:false
+226 http fetch GET 200 https://registry.npmmirror.com/tapable 276ms (cache miss)
+227 silly packumentCache full:https://registry.npmmirror.com/tapable set size:28216 disposed:false
+228 http fetch GET 200 https://registry.npmmirror.com/graceful-fs 957ms (cache miss)
+229 silly packumentCache full:https://registry.npmmirror.com/graceful-fs set size:23015 disposed:false
+230 http fetch GET 200 https://registry.npmmirror.com/lightningcss-win32-x64-msvc 2777ms (cache miss)
+231 silly packumentCache full:https://registry.npmmirror.com/lightningcss-win32-x64-msvc set size:21290 disposed:false
+232 http fetch GET https://registry.npmmirror.com/lightningcss-linux-arm64-gnu attempt 1 failed with ETIMEDOUT
+233 http fetch GET 200 https://registry.npmmirror.com/lightningcss-linux-arm64-gnu 31361ms attempt #2 (cache miss)
+234 silly packumentCache full:https://registry.npmmirror.com/lightningcss-linux-arm64-gnu set size:21482 disposed:false
+235 silly placeDep ROOT @jridgewell/gen-mapping@0.3.13 OK for: @jridgewell/remapping@2.3.5 want: ^0.3.5
+236 silly placeDep ROOT @jridgewell/trace-mapping@0.3.31 OK for: @jridgewell/remapping@2.3.5 want: ^0.3.24
+237 silly fetch manifest @jridgewell/resolve-uri@^3.1.0
+238 silly packumentCache full:https://registry.npmmirror.com/@jridgewell%2fresolve-uri cache-miss
+239 http fetch GET 200 https://registry.npmmirror.com/@jridgewell%2fresolve-uri 55ms (cache miss)
+240 silly packumentCache full:https://registry.npmmirror.com/@jridgewell%2fresolve-uri set size:14497 disposed:false
+241 silly placeDep ROOT @jridgewell/resolve-uri@3.1.2 OK for: @jridgewell/trace-mapping@0.3.31 want: ^3.1.0
+242 silly placeDep ROOT @tailwindcss/oxide-android-arm64@4.3.3 OK for: @tailwindcss/oxide@4.3.3 want: 4.3.3
+243 silly placeDep ROOT @tailwindcss/oxide-darwin-arm64@4.3.3 OK for: @tailwindcss/oxide@4.3.3 want: 4.3.3
+244 silly placeDep ROOT @tailwindcss/oxide-darwin-x64@4.3.3 OK for: @tailwindcss/oxide@4.3.3 want: 4.3.3
+245 silly placeDep ROOT @tailwindcss/oxide-freebsd-x64@4.3.3 OK for: @tailwindcss/oxide@4.3.3 want: 4.3.3
+246 silly placeDep ROOT @tailwindcss/oxide-linux-arm-gnueabihf@4.3.3 OK for: @tailwindcss/oxide@4.3.3 want: 4.3.3
+247 silly placeDep ROOT @tailwindcss/oxide-linux-arm64-gnu@4.3.3 OK for: @tailwindcss/oxide@4.3.3 want: 4.3.3
+248 silly placeDep ROOT @tailwindcss/oxide-linux-arm64-musl@4.3.3 OK for: @tailwindcss/oxide@4.3.3 want: 4.3.3
+249 silly placeDep ROOT @tailwindcss/oxide-linux-x64-gnu@4.3.3 OK for: @tailwindcss/oxide@4.3.3 want: 4.3.3
+250 silly placeDep ROOT @tailwindcss/oxide-linux-x64-musl@4.3.3 OK for: @tailwindcss/oxide@4.3.3 want: 4.3.3
+251 silly placeDep ROOT @tailwindcss/oxide-wasm32-wasi@4.3.3 OK for: @tailwindcss/oxide@4.3.3 want: 4.3.3
+252 silly placeDep ROOT @tailwindcss/oxide-win32-arm64-msvc@4.3.3 OK for: @tailwindcss/oxide@4.3.3 want: 4.3.3
+253 silly placeDep ROOT @tailwindcss/oxide-win32-x64-msvc@4.3.3 OK for: @tailwindcss/oxide@4.3.3 want: 4.3.3
+254 http cache https://registry.npmmirror.com/@tailwindcss/oxide-wasm32-wasi/-/oxide-wasm32-wasi-4.3.3.tgz 0ms (cache hit)
+255 silly tarball no local data for https://registry.npmmirror.com/@tailwindcss/oxide-wasm32-wasi/-/oxide-wasm32-wasi-4.3.3.tgz. Extracting by manifest.
+256 http fetch GET 200 https://cdn.npmmirror.com/packages/%40tailwindcss/oxide-wasm32-wasi/4.3.3/oxide-wasm32-wasi-4.3.3.tgz 862ms (cache miss)
+257 silly placeDep ROOT graceful-fs@4.2.11 OK for: enhanced-resolve@5.26.0 want: ^4.2.4
+258 silly placeDep ROOT tapable@2.3.3 OK for: enhanced-resolve@5.26.0 want: ^2.3.3
+259 silly placeDep ROOT detect-libc@2.1.2 OK for: lightningcss@1.32.0 want: ^2.0.3
+260 silly placeDep ROOT lightningcss-android-arm64@1.32.0 OK for: lightningcss@1.32.0 want: 1.32.0
+261 silly placeDep ROOT lightningcss-darwin-arm64@1.32.0 OK for: lightningcss@1.32.0 want: 1.32.0
+262 silly placeDep ROOT lightningcss-darwin-x64@1.32.0 OK for: lightningcss@1.32.0 want: 1.32.0
+263 silly placeDep ROOT lightningcss-freebsd-x64@1.32.0 OK for: lightningcss@1.32.0 want: 1.32.0
+264 silly placeDep ROOT lightningcss-linux-arm-gnueabihf@1.32.0 OK for: lightningcss@1.32.0 want: 1.32.0
+265 silly placeDep ROOT lightningcss-linux-arm64-gnu@1.32.0 OK for: lightningcss@1.32.0 want: 1.32.0
+266 silly placeDep ROOT lightningcss-linux-arm64-musl@1.32.0 OK for: lightningcss@1.32.0 want: 1.32.0
+267 silly placeDep ROOT lightningcss-linux-x64-gnu@1.32.0 OK for: lightningcss@1.32.0 want: 1.32.0
+268 silly placeDep ROOT lightningcss-linux-x64-musl@1.32.0 OK for: lightningcss@1.32.0 want: 1.32.0
+269 silly placeDep ROOT lightningcss-win32-arm64-msvc@1.32.0 OK for: lightningcss@1.32.0 want: 1.32.0
+270 silly placeDep ROOT lightningcss-win32-x64-msvc@1.32.0 OK for: lightningcss@1.32.0 want: 1.32.0
+271 silly placeDep ROOT @parcel/watcher@2.6.0 OK for: sass@1.105.1 want: ^2.4.1
+272 silly placeDep ROOT chokidar@5.0.0 OK for: sass@1.105.1 want: ^5.0.0
+273 silly placeDep ROOT immutable@5.1.9 OK for: sass@1.105.1 want: ^5.1.5
+274 silly fetch manifest is-glob@^4.0.3
+275 silly packumentCache full:https://registry.npmmirror.com/is-glob cache-miss
+276 silly fetch manifest node-addon-api@^7.0.0
+277 silly packumentCache full:https://registry.npmmirror.com/node-addon-api cache-miss
+278 silly fetch manifest picomatch@^4.0.4
+279 silly packumentCache full:https://registry.npmmirror.com/picomatch cache-miss
+280 silly fetch manifest @parcel/watcher-darwin-x64@2.6.0
+281 silly packumentCache full:https://registry.npmmirror.com/@parcel%2fwatcher-darwin-x64 cache-miss
+282 silly fetch manifest @parcel/watcher-darwin-arm64@2.6.0
+283 silly packumentCache full:https://registry.npmmirror.com/@parcel%2fwatcher-darwin-arm64 cache-miss
+284 silly fetch manifest @parcel/watcher-win32-x64@2.6.0
+285 silly packumentCache full:https://registry.npmmirror.com/@parcel%2fwatcher-win32-x64 cache-miss
+286 silly fetch manifest @parcel/watcher-win32-arm64@2.6.0
+287 silly packumentCache full:https://registry.npmmirror.com/@parcel%2fwatcher-win32-arm64 cache-miss
+288 silly fetch manifest @parcel/watcher-linux-x64-glibc@2.6.0
+289 silly packumentCache full:https://registry.npmmirror.com/@parcel%2fwatcher-linux-x64-glibc cache-miss
+290 silly fetch manifest @parcel/watcher-linux-x64-musl@2.6.0
+291 silly packumentCache full:https://registry.npmmirror.com/@parcel%2fwatcher-linux-x64-musl cache-miss
+292 silly fetch manifest @parcel/watcher-linux-arm64-glibc@2.6.0
+293 silly packumentCache full:https://registry.npmmirror.com/@parcel%2fwatcher-linux-arm64-glibc cache-miss
+294 silly fetch manifest @parcel/watcher-linux-arm64-musl@2.6.0
+295 silly packumentCache full:https://registry.npmmirror.com/@parcel%2fwatcher-linux-arm64-musl cache-miss
+296 http fetch GET 200 https://registry.npmmirror.com/picomatch 26ms (cache miss)
+297 silly packumentCache full:https://registry.npmmirror.com/picomatch set size:24788 disposed:false
+298 silly fetch manifest @parcel/watcher-linux-arm-glibc@2.6.0
+299 silly packumentCache full:https://registry.npmmirror.com/@parcel%2fwatcher-linux-arm-glibc cache-miss
+300 http fetch GET 200 https://registry.npmmirror.com/@parcel%2fwatcher-darwin-arm64 58ms (cache miss)
+301 silly packumentCache full:https://registry.npmmirror.com/@parcel%2fwatcher-darwin-arm64 set size:6355 disposed:false
+302 silly fetch manifest @parcel/watcher-linux-arm-musl@2.6.0
+303 silly packumentCache full:https://registry.npmmirror.com/@parcel%2fwatcher-linux-arm-musl cache-miss
+304 http fetch GET 200 https://registry.npmmirror.com/@parcel%2fwatcher-darwin-x64 63ms (cache miss)
+305 silly packumentCache full:https://registry.npmmirror.com/@parcel%2fwatcher-darwin-x64 set size:6390 disposed:false
+306 silly fetch manifest @parcel/watcher-android-arm64@2.6.0
+307 silly packumentCache full:https://registry.npmmirror.com/@parcel%2fwatcher-android-arm64 cache-miss
+308 http fetch GET 200 https://registry.npmmirror.com/@parcel%2fwatcher-win32-x64 63ms (cache miss)
+309 silly packumentCache full:https://registry.npmmirror.com/@parcel%2fwatcher-win32-x64 set size:6393 disposed:false
+310 silly fetch manifest @parcel/watcher-freebsd-x64@2.6.0
+311 silly packumentCache full:https://registry.npmmirror.com/@parcel%2fwatcher-freebsd-x64 cache-miss
+312 http fetch GET 200 https://registry.npmmirror.com/@parcel%2fwatcher-linux-x64-glibc 70ms (cache miss)
+313 silly packumentCache full:https://registry.npmmirror.com/@parcel%2fwatcher-linux-x64-glibc set size:6338 disposed:false
+314 silly fetch manifest readdirp@^5.0.0
+315 silly packumentCache full:https://registry.npmmirror.com/readdirp cache-miss
+316 http fetch GET 200 https://registry.npmmirror.com/@parcel%2fwatcher-linux-arm64-glibc 71ms (cache miss)
+317 silly packumentCache full:https://registry.npmmirror.com/@parcel%2fwatcher-linux-arm64-glibc set size:6400 disposed:false
+318 http fetch GET 200 https://registry.npmmirror.com/@parcel%2fwatcher-win32-arm64 74ms (cache miss)
+319 silly packumentCache full:https://registry.npmmirror.com/@parcel%2fwatcher-win32-arm64 set size:6146 disposed:false
+320 http fetch GET 200 https://registry.npmmirror.com/is-glob 77ms (cache miss)
+321 silly packumentCache full:https://registry.npmmirror.com/is-glob set size:7964 disposed:false
+322 http fetch GET 200 https://registry.npmmirror.com/@parcel%2fwatcher-linux-arm-glibc 54ms (cache miss)
+323 silly packumentCache full:https://registry.npmmirror.com/@parcel%2fwatcher-linux-arm-glibc set size:6380 disposed:false
+324 http fetch GET 200 https://registry.npmmirror.com/@parcel%2fwatcher-linux-arm64-musl 80ms (cache miss)
+325 silly packumentCache full:https://registry.npmmirror.com/@parcel%2fwatcher-linux-arm64-musl set size:6372 disposed:false
+326 http fetch GET 200 https://registry.npmmirror.com/@parcel%2fwatcher-linux-arm-musl 37ms (cache miss)
+327 silly packumentCache full:https://registry.npmmirror.com/@parcel%2fwatcher-linux-arm-musl set size:2556 disposed:false
+328 http fetch GET 200 https://registry.npmmirror.com/@parcel%2fwatcher-android-arm64 42ms (cache miss)
+329 silly packumentCache full:https://registry.npmmirror.com/@parcel%2fwatcher-android-arm64 set size:6083 disposed:false
+330 http fetch GET 200 https://registry.npmmirror.com/@parcel%2fwatcher-freebsd-x64 41ms (cache miss)
+331 silly packumentCache full:https://registry.npmmirror.com/@parcel%2fwatcher-freebsd-x64 set size:5095 disposed:false
+332 http fetch GET 200 https://registry.npmmirror.com/readdirp 44ms (cache miss)
+333 silly packumentCache full:https://registry.npmmirror.com/readdirp set size:19216 disposed:false
+334 http fetch GET 200 https://registry.npmmirror.com/node-addon-api 253ms (cache miss)
+335 silly packumentCache full:https://registry.npmmirror.com/node-addon-api set size:45426 disposed:false
+336 http fetch GET 200 https://registry.npmmirror.com/@parcel%2fwatcher-linux-x64-musl 283ms (cache miss)
+337 silly packumentCache full:https://registry.npmmirror.com/@parcel%2fwatcher-linux-x64-musl set size:6355 disposed:false
+338 silly placeDep ROOT @parcel/watcher-android-arm64@2.6.0 OK for: @parcel/watcher@2.6.0 want: 2.6.0
+339 silly placeDep ROOT @parcel/watcher-darwin-arm64@2.6.0 OK for: @parcel/watcher@2.6.0 want: 2.6.0
+340 silly placeDep ROOT @parcel/watcher-darwin-x64@2.6.0 OK for: @parcel/watcher@2.6.0 want: 2.6.0
+341 silly placeDep ROOT @parcel/watcher-freebsd-x64@2.6.0 OK for: @parcel/watcher@2.6.0 want: 2.6.0
+342 silly placeDep ROOT @parcel/watcher-linux-arm-glibc@2.6.0 OK for: @parcel/watcher@2.6.0 want: 2.6.0
+343 silly placeDep ROOT @parcel/watcher-linux-arm-musl@2.6.0 OK for: @parcel/watcher@2.6.0 want: 2.6.0
+344 silly placeDep ROOT @parcel/watcher-linux-arm64-glibc@2.6.0 OK for: @parcel/watcher@2.6.0 want: 2.6.0
+345 silly placeDep ROOT @parcel/watcher-linux-arm64-musl@2.6.0 OK for: @parcel/watcher@2.6.0 want: 2.6.0
+346 silly placeDep ROOT @parcel/watcher-linux-x64-glibc@2.6.0 OK for: @parcel/watcher@2.6.0 want: 2.6.0
+347 silly placeDep ROOT @parcel/watcher-linux-x64-musl@2.6.0 OK for: @parcel/watcher@2.6.0 want: 2.6.0
+348 silly placeDep ROOT @parcel/watcher-win32-arm64@2.6.0 OK for: @parcel/watcher@2.6.0 want: 2.6.0
+349 silly placeDep ROOT @parcel/watcher-win32-x64@2.6.0 OK for: @parcel/watcher@2.6.0 want: 2.6.0
+350 silly placeDep ROOT is-glob@4.0.3 OK for: @parcel/watcher@2.6.0 want: ^4.0.3
+351 silly placeDep ROOT node-addon-api@7.1.1 OK for: @parcel/watcher@2.6.0 want: ^7.0.0
+352 silly placeDep ROOT picomatch@4.0.7 REPLACE for: @parcel/watcher@2.6.0 want: ^4.0.4
+353 silly fetch manifest is-extglob@^2.1.1
+354 silly packumentCache full:https://registry.npmmirror.com/is-extglob cache-miss
+355 http fetch GET 200 https://registry.npmmirror.com/is-extglob 45ms (cache miss)
+356 silly packumentCache full:https://registry.npmmirror.com/is-extglob set size:3363 disposed:false
+357 silly placeDep ROOT readdirp@5.1.1 OK for: chokidar@5.0.0 want: ^5.0.0
+358 silly placeDep ROOT is-extglob@2.1.1 OK for: is-glob@4.0.3 want: ^2.1.1
+359 verbose cwd F:\AI Chat\yuan-chat-vue
+360 verbose os Windows_NT 10.0.19045
+361 verbose node v22.23.1
+362 verbose npm  v10.9.8
+363 notice
+363 notice New major version of npm available! 10.9.8 -> 12.2.0
+363 notice Changelog: https://github.com/npm/cli/releases/tag/v12.2.0
+363 notice To update run: npm install -g npm@12.2.0
+363 notice  { force: true, [Symbol(proc-log.meta)]: true }
+364 verbose exit 0
+365 info ok

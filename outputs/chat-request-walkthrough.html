@@ -1,0 +1,217 @@
+<div id="chat-flow-sim-oct6">
+  <div class="viz-controls">
+    <button class="btn" type="button" data-action="previous">上一步</button>
+    <button class="btn btn-primary" type="button" data-action="next">下一步</button>
+    <span class="tabular-nums text-small" data-view="counter"></span>
+  </div>
+  <div class="progress" role="progressbar" aria-label="请求执行进度" aria-valuemin="0" aria-valuemax="100" data-view="progress">
+    <div class="progress-bar" data-view="progress-fill"></div>
+  </div>
+  <div class="walk-stage" aria-live="polite" aria-atomic="true">
+    <h3 data-view="title"></h3>
+    <span class="text-small text-muted" data-view="detail"></span>
+  </div>
+  <pre class="walk-code"><code data-view="code"></code></pre>
+  <div class="viz-row text-small walk-flags">
+    <span>isGenerating：<code data-view="generating"></code></span>
+    <span>done：<code data-view="done"></code></span>
+    <span>finished：<code data-view="finished"></code></span>
+  </div>
+  <dl class="walk-state" aria-label="当前请求和解析状态">
+    <div data-view="request-row"><dt>请求体</dt><dd><code data-view="request"></code></dd></div>
+    <div><dt>本次网络数据</dt><dd><code data-view="chunk"></code></dd></div>
+    <div><dt>buffer</dt><dd><code data-view="buffer"></code></dd></div>
+    <div><dt>lines</dt><dd><code data-view="lines"></code></dd></div>
+    <div><dt>delta</dt><dd><code data-view="delta"></code></dd></div>
+    <div><dt>messages</dt><dd><code data-view="messages"></code></dd></div>
+    <div><dt>页面显示</dt><dd><span data-view="screen"></span></dd></div>
+    <div><dt>请求资源</dt><dd><span data-view="resources"></span></dd></div>
+  </dl>
+</div>
+<style>
+  #chat-flow-sim-oct6 { color: var(--foreground); }
+  #chat-flow-sim-oct6 .walk-stage { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 16px; margin: 18px 0 10px; }
+  #chat-flow-sim-oct6 .walk-stage h3 { margin: 0; }
+  #chat-flow-sim-oct6 .walk-code { white-space: pre-wrap; overflow-wrap: anywhere; margin: 0 0 14px; color: var(--foreground); }
+  #chat-flow-sim-oct6 .walk-flags { margin-bottom: 10px; }
+  #chat-flow-sim-oct6 .walk-state { margin: 0; }
+  #chat-flow-sim-oct6 .walk-state > div { display: grid; grid-template-columns: 112px minmax(0, 1fr); gap: 12px; padding: 8px 0; }
+  #chat-flow-sim-oct6 .walk-state > div[hidden] { display: none; }
+  #chat-flow-sim-oct6 .walk-state dt { font-weight: 500; }
+  #chat-flow-sim-oct6 .walk-state dd { min-width: 0; margin: 0; }
+  #chat-flow-sim-oct6 .walk-state code { white-space: pre-wrap; overflow-wrap: anywhere; }
+  #chat-flow-sim-oct6 [data-view="screen"],
+  #chat-flow-sim-oct6 [data-view="resources"] { white-space: pre-wrap; overflow-wrap: anywhere; }
+  @media (max-width: 420px) {
+    #chat-flow-sim-oct6 .walk-state > div { grid-template-columns: 88px minmax(0, 1fr); }
+  }
+</style>
+<script>
+(() => {
+  const root = document.getElementById('chat-flow-sim-oct6');
+  const view = (name) => root.querySelector('[data-view="' + name + '"]');
+  const previous = root.querySelector('[data-action="previous"]');
+  const next = root.querySelector('[data-action="next"]');
+  const question = '1 + 1 等于几？';
+  const state = {
+    messages: [], generating: false, done: null, finished: null,
+    chunk: '尚未读取', buffer: null, lines: null, delta: null,
+    request: null, controller: '尚未创建', reader: '尚未创建'
+  };
+  const frames = [];
+  function snapshot(title, detail, code) {
+    frames.push({ title, detail, code, state: JSON.parse(JSON.stringify(state)) });
+  }
+  snapshot('输入问题', 'ChatView · 输入框中有文字', 'inputMessage.value = "1 + 1 等于几？"');
+
+  state.messages.push({ role: 'user', content: question });
+  state.generating = true;
+  state.controller = '已创建，signal 已就绪';
+  snapshot('点击发送', '用户消息进入数组，输入框清空',
+    'messages.value.push(userMessage)\ninputMessage.value = ""\nisGenerating.value = true\nactiveRequest = new AbortController()');
+
+  state.request = { messages: state.messages.map(({ role, content }) => ({ role, content })) };
+  snapshot('发送 POST 请求', 'fetch 等待响应头；回复正文尚未读完',
+    'const response = await fetch("http://localhost:3000/api/chat", {\n  method: "POST", signal: activeRequest.signal,\n  body: JSON.stringify({ messages: [...] })\n})');
+
+  state.messages.push({ role: 'assistant', content: '' });
+  snapshot('收到 HTTP 200', '响应检查通过，创建空的 AI 消息',
+    'if (!response.ok || !response.body) throw new Error(...)\nconst reply = ref({ role: "assistant", content: "", ... })\nmessages.value.push(reply.value)');
+
+  state.reader = '已获取，准备读取';
+  state.buffer = '';
+  state.finished = false;
+  const decoder = new TextDecoder();
+  const encoder = new TextEncoder();
+  snapshot('准备读取响应流', '同一条 AI 消息会逐步增长',
+    'reader = response.body.getReader()\nconst decoder = new TextDecoder()\nlet buffer = ""\nlet finished = false');
+
+  const chunks = [
+    'data: {"choices":[{"delta":{"content":"1 + ',
+    '1"}}]}\n\n',
+    'data: {"choices":[{"delta":{"content":" = 2。"}}]}\n\n',
+    'data: [DONE]'
+  ];
+
+  function readLine(line, tail = false) {
+    if (!line.startsWith('data:')) return;
+    const data = line.slice(5).trim();
+    if (!data) return;
+    if (data === '[DONE]') {
+      state.finished = true;
+      snapshot('识别结束标记', tail ? '最后一行没有换行符，在流结束后处理' : 'finished 变为 true，退出循环',
+        'if (!finished && buffer.trim()) readLine(buffer)\n// readLine 内部：\nif (data === "[DONE]") { finished = true; return }');
+      return;
+    }
+    const json = JSON.parse(data);
+    if (json.error) throw new Error(json.error.message || json.error);
+    state.delta = json.choices?.[0]?.delta?.content || null;
+    if (state.delta) state.messages[state.messages.length - 1].content += state.delta;
+    snapshot('解析完整 JSON，追加文字', 'ChatMessageItem 显示更新后的 content',
+      'const data = line.slice(5).trim()\nconst json = JSON.parse(data)\nconst delta = json.choices?.[0]?.delta?.content\nif (delta) reply.value.content += delta');
+  }
+
+  chunks.forEach((text, index) => {
+    const value = encoder.encode(text);
+    state.done = false;
+    state.lines = null;
+    state.delta = null;
+    state.reader = '第 ' + (index + 1) + ' 次读取，' + value.length + ' 字节';
+    state.chunk = JSON.stringify(decoder.decode(value, { stream: true }));
+    state.buffer += JSON.parse(state.chunk);
+    snapshot('读取网络数据块 ' + (index + 1), 'done = false；解码后的文字追加到 buffer',
+      'const { done, value } = await reader.read()\nbuffer += decoder.decode(value, { stream: true })');
+
+    const lines = state.buffer.split('\n');
+    state.buffer = lines.pop() || '';
+    state.lines = [...lines];
+    snapshot('按换行符拆分', lines.length ? '完整行交给 readLine；空行会被跳过' : '没有完整行，buffer 留待下一次读取',
+      'const lines = buffer.split("\\n")\nbuffer = lines.pop() || ""\nfor (const line of lines) readLine(line)');
+
+    for (const line of lines) {
+      readLine(line);
+      if (state.finished) break;
+    }
+  });
+
+  state.done = true;
+  state.chunk = 'undefined';
+  state.delta = null;
+  state.reader = '第 5 次读取，响应流已结束';
+  state.buffer += decoder.decode();
+  const finalLines = state.buffer.split('\n');
+  state.buffer = finalLines.pop() || '';
+  state.lines = [...finalLines];
+  snapshot('网络响应流结束', 'done = true，但 finished 仍为 false',
+    'const { done, value } = await reader.read()\n// done: true, value: undefined\nbuffer += decoder.decode()');
+  for (const line of finalLines) readLine(line);
+  if (!state.finished && state.buffer.trim()) readLine(state.buffer, true);
+
+  state.reader = '已 cancel，并释放读取锁';
+  state.controller = 'null';
+  state.generating = false;
+  snapshot('执行 finally', '请求结束，输入与发送恢复可用',
+    'await reader?.cancel().catch(() => {})\nreader?.releaseLock()\nactiveRequest = null\nisGenerating.value = false');
+
+  let current = 0;
+  const print = (value) => value === null ? '—' : JSON.stringify(value);
+  const restore = (saved) => {
+    const candidate = saved?.privateContent?.step;
+    if (Number.isInteger(candidate)) current = Math.max(0, Math.min(frames.length - 1, candidate));
+  };
+  const persist = () => {
+    const result = window.openai?.setWidgetState?.({
+      modelContent: { example: question, step: current + 1, stage: frames[current].title },
+      privateContent: { step: current }
+    });
+    result?.catch(() => {});
+  };
+  function render() {
+    const frame = frames[current];
+    const s = frame.state;
+    view('counter').textContent = (current + 1) + ' / ' + frames.length;
+    view('title').textContent = frame.title;
+    view('detail').textContent = frame.detail;
+    view('code').textContent = frame.code;
+    view('generating').textContent = String(s.generating);
+    view('done').textContent = print(s.done);
+    view('finished').textContent = print(s.finished);
+    view('request-row').hidden = current > 3;
+    view('request').textContent = s.request ? JSON.stringify(s.request, null, 2) : '尚未发送';
+    view('chunk').textContent = s.chunk;
+    view('buffer').textContent = print(s.buffer);
+    view('lines').textContent = print(s.lines);
+    view('delta').textContent = print(s.delta);
+    view('messages').textContent = JSON.stringify(s.messages, null, 2);
+    const last = s.messages.at(-1);
+    const thinking = s.generating && (last?.role !== 'assistant' || !last?.content);
+    view('screen').textContent = !s.messages.length
+      ? '欢迎区；输入框：' + question
+      : '你：' + question + '\nAI：' + (thinking ? '正在思考…' : last?.role === 'assistant' ? last.content : '等待回复');
+    view('resources').textContent = 'activeRequest：' + s.controller + '\nreader：' + s.reader;
+    previous.disabled = current === 0;
+    next.disabled = current === frames.length - 1;
+    const percentage = Math.round(current / (frames.length - 1) * 100);
+    view('progress').setAttribute('aria-valuenow', String(percentage));
+    view('progress-fill').style.width = percentage + '%';
+  }
+  previous.addEventListener('click', () => {
+    current = Math.max(0, current - 1);
+    render();
+    persist();
+  });
+  next.addEventListener('click', () => {
+    current = Math.min(frames.length - 1, current + 1);
+    render();
+    persist();
+  });
+  window.addEventListener('openai:set_globals', (event) => {
+    if (event.detail?.globals?.widgetState) {
+      restore(event.detail.globals.widgetState);
+      render();
+    }
+  });
+  restore(window.openai?.widgetState);
+  render();
+})();
+</script>

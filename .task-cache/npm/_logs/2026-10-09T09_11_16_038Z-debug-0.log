@@ -1,0 +1,41 @@
+0 verbose cli C:\Program Files\nodejs\node.exe C:\Program Files\nodejs\node_modules\npm\bin\npm-cli.js
+1 info using npm@10.9.8
+2 info using node@v22.23.1
+3 silly config load:file:G:\nodejs\nvm\v22.23.1\node_modules\npm\npmrc
+4 silly config load:file:F:\AI Chat\yuan-chat-vue\backend\.npmrc
+5 silly config load:file:C:\Users\29227\.npmrc
+6 silly config load:file:C:\Program Files\nodejs\etc\npmrc
+7 verbose title npm uninstall @google/generative-ai openai ws
+8 verbose argv "uninstall" "@google/generative-ai" "openai" "ws" "--ignore-scripts" "--no-audit" "--no-fund" "--offline" "--cache" "F:\\AI Chat\\.task-cache\\npm"
+9 verbose logfile logs-max:10 dir:F:\AI Chat\.task-cache\npm\_logs\2026-10-09T09_11_16_038Z-
+10 verbose logfile F:\AI Chat\.task-cache\npm\_logs\2026-10-09T09_11_16_038Z-debug-0.log
+11 silly logfile done cleaning log files
+12 silly packumentCache heap:4345298944 maxSize:1086324736 maxEntrySize:543162368
+13 silly idealTree buildDeps
+14 silly reify mark retired [
+14 silly reify   'F:\\AI Chat\\yuan-chat-vue\\backend\\node_modules\\@google\\generative-ai'
+14 silly reify ]
+15 silly reify mark retired [
+15 silly reify   'F:\\AI Chat\\yuan-chat-vue\\backend\\node_modules\\openai',
+15 silly reify   'F:\\AI Chat\\yuan-chat-vue\\backend\\node_modules\\.bin\\openai',
+15 silly reify   'F:\\AI Chat\\yuan-chat-vue\\backend\\node_modules\\.bin\\openai.cmd',
+15 silly reify   'F:\\AI Chat\\yuan-chat-vue\\backend\\node_modules\\.bin\\openai.ps1'
+15 silly reify ]
+16 silly reify mark retired [ 'F:\\AI Chat\\yuan-chat-vue\\backend\\node_modules\\ws' ]
+17 silly reify moves {
+17 silly reify   'F:\\AI Chat\\yuan-chat-vue\\backend\\node_modules\\@google\\generative-ai': 'F:\\AI Chat\\yuan-chat-vue\\backend\\node_modules\\@google\\.generative-ai-L5FpaAZi',
+17 silly reify   'F:\\AI Chat\\yuan-chat-vue\\backend\\node_modules\\openai': 'F:\\AI Chat\\yuan-chat-vue\\backend\\node_modules\\.openai-ajDoB1kU',
+17 silly reify   'F:\\AI Chat\\yuan-chat-vue\\backend\\node_modules\\.bin\\openai': 'F:\\AI Chat\\yuan-chat-vue\\backend\\node_modules\\.bin\\.openai-ClekPLtd',
+17 silly reify   'F:\\AI Chat\\yuan-chat-vue\\backend\\node_modules\\.bin\\openai.cmd': 'F:\\AI Chat\\yuan-chat-vue\\backend\\node_modules\\.bin\\.openai.cmd-lalBqiM2',
+17 silly reify   'F:\\AI Chat\\yuan-chat-vue\\backend\\node_modules\\.bin\\openai.ps1': 'F:\\AI Chat\\yuan-chat-vue\\backend\\node_modules\\.bin\\.openai.ps1-IjWc8S7U',
+17 silly reify   'F:\\AI Chat\\yuan-chat-vue\\backend\\node_modules\\ws': 'F:\\AI Chat\\yuan-chat-vue\\backend\\node_modules\\.ws-dbP9KqQB'
+17 silly reify }
+18 silly REMOVE node_modules/ws
+19 silly REMOVE node_modules/openai
+20 silly REMOVE node_modules/@google/generative-ai
+21 verbose cwd F:\AI Chat\yuan-chat-vue\backend
+22 verbose os Windows_NT 10.0.19045
+23 verbose node v22.23.1
+24 verbose npm  v10.9.8
+25 verbose exit 0
+26 info ok
