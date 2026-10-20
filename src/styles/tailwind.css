@@ -1,0 +1,5 @@
+/* Tailwind 入口保持为普通 CSS，不经过 Sass；省略 Preflight 以兼容 Element Plus。 */
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme) prefix(tw);
+@import "tailwindcss/utilities.css" layer(utilities) prefix(tw);
+@source "../";

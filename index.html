@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="zh-CN">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#ffffff" />
+  <script id="theme-init">
+    // 在应用和样式加载前恢复主题，减少夜间模式刷新时的白色闪屏。
+    (() => {
+      let savedTheme
+      try {
+        savedTheme = window.localStorage.getItem('ai-chat-theme')
+      } catch { }
+      const theme = savedTheme === 'light' || savedTheme === 'dark'
+        ? savedTheme
+        : window.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+      const root = document.documentElement
+      root.classList.toggle('dark', theme === 'dark')
+      root.dataset.theme = theme
+      root.style.colorScheme = theme
+      document.querySelector('meta[name="theme-color"]')
+        ?.setAttribute('content', theme === 'dark' ? '#141b1a' : '#ffffff')
+    })()
+  </script>
+  <style>
+    html {
+      background: #ffffff;
+    }
+
+    html.dark {
+      background: #141b1a;
+    }
+  </style>
+  <title>AI 聊天 · 你的智能助手</title>
+</head>
+
+<body>
+  <div id="app"></div>
+  <script type="module" src="src/main.js"></script>
+</body>
+
+</html>

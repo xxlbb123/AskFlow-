@@ -1,0 +1,155 @@
+//:root在当前HTML页面中表示根元素，也就是<html> 
+:root {
+  font-family: "Inter", "PingFang SC", "Microsoft YaHei", system-ui, sans-serif;
+  color: var(--chat-text);
+  background: var(--chat-background);
+  color-scheme: light;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+    //这些都是CSS变量 
+  --chat-accent: #147d6d;
+  --chat-accent-soft: #edf6f2;
+  --chat-on-accent: #fff;
+  --chat-background: #fff;
+  --chat-surface: #fff;
+  --chat-sidebar-background: #f5f7f8;
+  --chat-hover-background: #eaf0ee;
+  --chat-suggestion-hover: #f8fcfa;
+  --chat-text: #253333;
+  --chat-text-secondary: #56636d;
+  --chat-muted: #808b91;
+  --chat-subtle: #949ea6;
+  --chat-border: #e7ebed;
+  --chat-border-strong: #d9e1e0;
+  --chat-accent-border: #bcd9d5;
+  --chat-accent-border-hover: #8dbbb2;
+  --chat-user-background: #f0f6f4;
+  --chat-user-border: #e0eae7;
+  --chat-user-avatar-background: #edf0f4;
+  --chat-user-avatar-text: #64748b;
+  --chat-disabled-background: #edf2f0;
+  --chat-disabled-text: #9caeaa;
+  --chat-composer-shadow: 0 5px 22px #203c3510;
+  --chat-button-shadow: 0 2px 3px #1b4a4004;
+  --chat-focus-ring: #147d6d08;
+  --chat-code-comment: #5f726c;
+  --chat-code-keyword: #8a3fa0;
+  --chat-code-string: #216e39;
+  --chat-code-number: #986801;
+  --chat-code-function: #2863b3;
+  --chat-code-type: #8b5b14;
+  --chat-code-variable: #a13e53;
+  --chat-content-width: 800px;
+  --chat-gutter: 36px;
+  --el-color-primary: #147d6d;
+  --el-color-primary-light-3: #5ba497;
+  --el-color-primary-light-5: #8abeb6;
+  --el-color-primary-light-7: #b9d8d3;
+  --el-color-primary-light-8: #d0e5e2;
+  --el-color-primary-light-9: #e8f2f0;
+  --el-color-primary-dark-2: #106457;
+
+  // 只替换颜色变量，组件的 SCSS 布局可以同时用于两种主题。
+  &.dark {
+    color-scheme: dark;
+    --chat-accent: #60c7af;
+    --chat-accent-soft: #223e35;
+    --chat-on-accent: #102b23;
+    --chat-background: #141b1a;
+    --chat-surface: #1c2523;
+    --chat-sidebar-background: #18211f;
+    --chat-hover-background: #25372f;
+    --chat-suggestion-hover: #21312a;
+    --chat-text: #e3eeea;
+    --chat-text-secondary: #b7c6c0;
+    --chat-muted: #9cada3;
+    --chat-subtle: #899f94;
+    --chat-border: #2b3b34;
+    --chat-border-strong: #394d43;
+    --chat-accent-border: #43685b;
+    --chat-accent-border-hover: #527d6b;
+    --chat-user-background: #233d33;
+    --chat-user-border: #345a48;
+    --chat-user-avatar-background: #2c393b;
+    --chat-user-avatar-text: #b6c7ce;
+    --chat-disabled-background: #283830;
+    --chat-disabled-text: #718b7d;
+    --chat-composer-shadow: 0 5px 22px #00000025;
+    --chat-button-shadow: 0 2px 3px #00000015;
+    --chat-focus-ring: #60c7af20;
+    --chat-code-comment: #8da399;
+    --chat-code-keyword: #c792ea;
+    --chat-code-string: #b7db8b;
+    --chat-code-number: #f6b777;
+    --chat-code-function: #82aaff;
+    --chat-code-type: #e6c07b;
+    --chat-code-variable: #f28b96;
+    --el-color-primary: #60c7af;
+    --el-color-primary-light-3: #488f7d;
+    --el-color-primary-light-5: #386b5e;
+    --el-color-primary-light-7: #28483f;
+    --el-color-primary-light-8: #20372f;
+    --el-color-primary-light-9: #1a2923;
+    --el-color-primary-dark-2: #80d2bf;
+  }
+
+  @media (max-width: 767px) {
+    --chat-gutter: 16px;
+  }
+}
+
+// 与 Element Plus 共用页面的背景、边框和文字变量，包括传送到 body 的抽屉。
+:root,
+:root.dark {
+  --el-bg-color: var(--chat-surface);
+  --el-bg-color-page: var(--chat-background);
+  --el-bg-color-overlay: var(--chat-surface);
+  --el-text-color-primary: var(--chat-text);
+  --el-text-color-regular: var(--chat-text-secondary);
+  --el-text-color-secondary: var(--chat-muted);
+  --el-text-color-placeholder: var(--chat-subtle);
+  --el-text-color-disabled: var(--chat-disabled-text);
+  --el-border-color: var(--chat-border-strong);
+  --el-border-color-light: var(--chat-border);
+  --el-border-color-lighter: var(--chat-border);
+  --el-fill-color-blank: var(--chat-surface);
+  --el-fill-color-light: var(--chat-hover-background);
+  --el-fill-color-lighter: var(--chat-hover-background);
+  --el-fill-color-dark: var(--chat-disabled-background);
+  --el-disabled-bg-color: var(--chat-disabled-background);
+}
+
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+body, h1, h2, p {
+  margin: 0;
+}
+html, body, #app {
+  width: 100%;
+  height: 100%;
+  min-width: 320px;
+  overflow: hidden;
+}
+#app {
+  height: 100vh;
+  height: 100dvh;
+}
+body {
+  line-height: 1.6;
+}
+button, input, textarea {
+  font: inherit;
+}
+button:focus-visible, a:focus-visible {
+  outline: 2px solid var(--chat-accent);
+  outline-offset: 4px;
+}
+.mobile-sidebar-drawer {
+  .el-drawer__body {
+    overflow: hidden;
+    padding: 0;
+  }
+}

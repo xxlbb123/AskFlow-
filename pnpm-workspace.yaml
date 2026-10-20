@@ -1,0 +1,6 @@
+packages:
+  - 'backend'
+allowBuilds:
+  # Sass compilation works without rebuilding this optional file watcher from source.
+  '@parcel/watcher': false
+  esbuild: true
