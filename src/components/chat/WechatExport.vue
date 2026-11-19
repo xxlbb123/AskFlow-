@@ -70,10 +70,10 @@ async function exportChecklist() {
 </script>
 
 <template>
-  <el-button native-type="button" text size="small" :disabled="disabled" @click="openDialog">微信整理</el-button>
+  <el-button native-type="button" text size="small" :disabled="disabled" @click="openDialog">补充微信转写</el-button>
   <el-dialog
     v-model="open"
-    title="从微信整理论文反馈"
+    title="补充微信转写"
     width="min(540px, calc(100vw - 32px))"
     append-to-body
     @close="closeDialog"
@@ -88,8 +88,7 @@ async function exportChecklist() {
       placeholder="把我跟王老师 11 月 3 日到 11 月 6 日的论文修改意见分条整理成 Word"
       :disabled="busy"
     />
-    <details class="voice-options" :open="voices.length > 0 || undefined">
-      <summary>补充微信转写</summary>
+    <div class="voice-options">
       <p class="help">可以在微信对语音使用「转文字」，再把转写粘贴到这里。填写原来的发送时间和发言人。</p>
       <fieldset v-for="(voice, index) in voices" :key="voice.id" class="voice-entry" :disabled="busy">
         <legend>语音 {{ index + 1 }}</legend>
@@ -101,7 +100,7 @@ async function exportChecklist() {
         <el-button native-type="button" text size="small" @click="voices.splice(index, 1)">移除这段</el-button>
       </fieldset>
       <el-button class="add-voice" native-type="button" size="small" :disabled="busy" @click="addVoice">添加一段转写</el-button>
-    </details>
+    </div>
     <p v-if="error" class="error" role="alert">{{ error }}</p>
     <template #footer>
       <el-button native-type="button" @click="open = false">{{ busy ? '取消整理' : '取消' }}</el-button>
@@ -117,8 +116,6 @@ async function exportChecklist() {
 .help { margin: 0 0 12px; color: var(--el-text-color-secondary); }
 .error { margin: 12px 0 0; color: var(--el-color-danger); }
 .voice-options { margin-top: 14px; }
-.voice-options summary { cursor: pointer; }
-.voice-options .help { margin: 8px 0; }
 .add-voice { margin-top: 8px; }
 .voice-entry { min-width: 0; margin: 12px 0 0; padding: 10px; border: 1px solid var(--el-border-color); border-radius: 6px; }
 .voice-entry legend { overflow-wrap: anywhere; }

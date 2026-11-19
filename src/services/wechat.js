@@ -1,4 +1,21 @@
-const apiBase = import.meta.env?.VITE_API_BASE_URL || 'http://localhost:3000'
+import { apiBase } from './api.js'
+
+const reportId = /^[\da-f]{8}-(?:[\da-f]{4}-){3}[\da-f]{12}$/i
+
+export function readWechatDownload(value) {
+  if (!value || typeof value.id !== 'string' || !reportId.test(value.id) ||
+      !['docx', 'markdown'].includes(value.format)) return null
+  return { id: value.id, format: value.format }
+}
+
+export function describeWechatDownload(value) {
+  const file = readWechatDownload(value)
+  if (!file) return null
+  return {
+    href: `${apiBase}/api/wechat/reports/${file.id}/${file.format}`,
+    label: file.format === 'markdown' ? '下载 Markdown 清单' : '下载 Word 清单'
+  }
+}
 
 export async function exportWechatChecklist(request, voiceTranscripts, signal) {
   const response = await fetch(`${apiBase}/api/wechat/revision-checklist`, {

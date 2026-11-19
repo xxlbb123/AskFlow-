@@ -1,3 +1,5 @@
+import { apiBase } from './api.js'
+
 export const FILE_MAX_BYTES = 2 * 1024 * 1024
 export const FILE_UPLOAD_TIMEOUT_MS = 5 * 60 * 1000
 
@@ -20,7 +22,7 @@ export async function uploadFile({ file, scopeId, signal }) {
     controller.signal.throwIfAborted()
     let response
     try {
-      response = await fetch(`http://localhost:3000/api/files?${query}`, {
+      response = await fetch(`${apiBase}/api/files?${query}`, {
         method: 'POST', headers: { 'Content-Type': 'application/octet-stream' }, body: file, signal: controller.signal
       })
     } catch {

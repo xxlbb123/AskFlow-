@@ -1,4 +1,5 @@
 import { ref } from 'vue'
+import { readWechatDownload } from '../services/wechat.js'
 
 export const CHAT_STORAGE_KEY = 'ai-chat-history-v1'
 export const chatStorageError = ref('')
@@ -20,6 +21,16 @@ function fileData(file, pending = false) {
   }
 }
 
+function assistantData(message) {
+  const download = readWechatDownload(message.download)
+  return {
+    sources: (Array.isArray(message.sources) ? message.sources : []).filter(source => source
+      && Number.isInteger(source.index) && source.index > 0 && typeof source.text === 'string'),
+    documentMode: ['full', 'retrieval'].includes(message.documentMode) ? message.documentMode : '',
+    ...(download && { download })
+  }
+}
+
 // 只保存普通数据；生成状态、错误、上传中的 File 和请求控制器不属于历史记录。
 function sessionData(session) {
   if (!session || !isId(session.id) || !Array.isArray(session.messages)) return null
@@ -33,11 +44,7 @@ function sessionData(session) {
       timestamp: typeof message.timestamp === 'string' ? message.timestamp : '',
       ...(message.role === 'user' ? {
         attachments: (Array.isArray(message.attachments) ? message.attachments : []).map(file => fileData(file)).filter(Boolean)
-      } : {
-        sources: (Array.isArray(message.sources) ? message.sources : []).filter(source => source
-          && Number.isInteger(source.index) && source.index > 0 && typeof source.text === 'string'),
-        documentMode: ['full', 'retrieval'].includes(message.documentMode) ? message.documentMode : ''
-      })
+      } : assistantData(message))
     }))
   if (!messages.length) return null
   const hasScope = isId(session.documentScopeId)

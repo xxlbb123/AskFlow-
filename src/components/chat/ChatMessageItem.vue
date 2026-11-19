@@ -1,13 +1,15 @@
 <script setup>
-import { ref } from 'vue'
-import { ChatDotRound, User } from '@element-plus/icons-vue'
+import { computed, ref } from 'vue'
+import { ChatDotRound, Download, User } from '@element-plus/icons-vue'
 import MarkdownContent from '../common/MarkdownContent.vue'
 import CopyButton from '../common/CopyButton.vue'
 import AttachmentList from './attachments/AttachmentList.vue'
 import SourceReferences from './attachments/SourceReferences.vue'
+import { describeWechatDownload } from '../../services/wechat.js'
 
-defineProps({ message: { type: Object, required: true } })
+const props = defineProps({ message: { type: Object, required: true } })
 const sourceReferences = ref(null)
+const download = computed(() => props.message.role === 'assistant' && describeWechatDownload(props.message.download))
 </script>
 
 <template>
@@ -22,6 +24,9 @@ const sourceReferences = ref(null)
       <MarkdownContent v-else class="message-content" :content="message.content" :sources="message.sources"
         @select-source="sourceReferences?.openSource($event)" />
       <SourceReferences v-if="message.role === 'assistant'" ref="sourceReferences" :sources="message.sources" :mode="message.documentMode" />
+      <a v-if="download" class="report-link" :href="download.href" target="_blank" rel="noopener" download>
+        <el-icon><Download /></el-icon>{{ download.label }}
+      </a>
       <div v-if="message.role === 'assistant' && message.content" class="message-actions">
         <CopyButton :text="message.content" label="复制回复" />
       </div>
@@ -98,5 +103,19 @@ const sourceReferences = ref(null)
   display: flex;
   align-items: center;
   margin-top: 12px;
+}
+.report-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  color: var(--chat-accent);
+  background: var(--chat-accent-soft);
+  font-size: 14px;
+  text-decoration: none;
+
+  &:hover { text-decoration: underline; }
 }
 </style>
