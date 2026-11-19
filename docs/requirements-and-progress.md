@@ -34,8 +34,9 @@
 **桌面微信历史读取仍未通过真实验收。**
 
 - 现象。Windows 上的微信 MCP 能启动并注册读取工具。它通过社区依赖 `pyweixin` 操作桌面界面。指定实际会话和一分钟时段后，`Navigator.open_weixin()` 未识别到 `mmui::MainWindow`，返回 `NotFoundError`，AskFlow 显示 `WECHAT_UI_UNAVAILABLE`。查询联系人、读取文字和转写语音均未执行。
-- 已试。当前版本为微信 `4.2.0.52`、`pywechat127 1.9.8`、`pywinauto 0.6.9`。恢复窗口并复测，仍返回 `Qt51514QWindowIcon`。检查 UI Automation 的控件视图和原始视图，两个视图均只显示外层窗口及 `MMUIRenderSubWindow` 等通用节点。启动 Windows「讲述人」后直接复试旧进程，真实读取仍失败。
-- 恢复试验。开启「讲述人」后正常退出并重开微信，登录窗口已暴露「进入微信」等控件。关闭临时启动的「讲述人」后，登录控件仍可见。当前停在本机登录页，完成登录后需确认聊天主窗口的控件能否读取。应用中的故障提示已补充这条恢复路径。[Windows 讲述人说明](https://support.microsoft.com/zh-cn/accessibility/windows/narrator/chapter-1-introducing-narrator) · [社区兼容记录](https://github.com/Hello-Mr-Crab/pywechat/issues/270)
+- 已试。当前版本为微信 `4.2.0.52`、`pywechat127 1.9.8`、`pywinauto 0.6.9`。恢复窗口、切到前台和临时开启 Windows「讲述人」后，原窗口仍只暴露 `Qt51514QWindowIcon` 和 `MMUIRenderSubWindow` 等通用节点。Windows UI Automation 的控件视图和原始视图结果一致。[Windows 讲述人说明](https://support.microsoft.com/zh-cn/accessibility/windows/narrator/chapter-1-introducing-narrator)
+- 登录误判。关闭原微信窗口后进程仍在。重新启动产生了另一个登录窗口，工具一度返回 `WECHAT_LOGIN_REQUIRED`。关闭测试登录窗及「讲述人」后，按上游新版的规则枚举同类窗口，只发现一个原微信外层窗口，未找到 `mmui::MainWindow`。原窗口实测仍返回 `WECHAT_UI_UNAVAILABLE`，应用提示已区分界面兼容问题和需要登录。
+- 社区对照。上游在微信 `4.1.10.31` 报告过原生 Windows UI Automation 也只见外层窗口，`4.1.11` 同样有人报告开启讲述人仍失败。上游新版会枚举同类窗口并筛选 `mmui` 控件，该改动仍依赖微信提供内部控件。社区尝试的讲述人和关闭 GPU 渲染效果因环境而异，目前没有适用于本机 `4.2.0.52` 的已验证方案。[上游同症状报告](https://github.com/Hello-Mr-Crab/pywechat/issues/270) · [讲述人复试记录](https://github.com/Hello-Mr-Crab/pywechat/issues/283) · [其他环境的复试记录](https://github.com/Hello-Mr-Crab/pywechat/issues/264) · [新版窗口查找实现](https://github.com/Hello-Mr-Crab/pywechat/blob/main/src/pyweixin/WeChatTools.py)
 - 验收条件。先在 Windows 可访问性树中确认聊天列表或搜索框可定位，再用已授权的同一分钟验证真实消息、原发送时间及语音转写进入聊天内校对。校对后的正文只在用户确认后进入文档整理。仓库问题记录中省略联系人名和聊天原文。
 
 ## 相关需求备忘

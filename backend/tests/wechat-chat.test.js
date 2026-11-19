@@ -126,7 +126,7 @@ test('main chat reads and transcribes, shows records for editing, then generates
   const unconfigured = await start();
   assert.match(textOf(await send([user(wordRequest)], { host: unconfigured })), /WECHAT_MCP_COMMAND/);
   const unavailable = await send([user(unavailableRequest)]);
-  assert.match(textOf(unavailable), /可读取的聊天控件.*讲述人/);
+  assert.match(textOf(unavailable), /可读取的聊天控件.*自动化兼容问题/);
   assert.ok(unavailable.every(event => !['wechat-review', 'download'].includes(event.type)));
   assert.equal(extracts, 0);
 

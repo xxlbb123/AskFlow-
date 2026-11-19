@@ -29,7 +29,7 @@ function historyPayload(result, contact, day) {
   }
   if (payload?.status === 'error') {
     if (payload.error_type === 'NotFoundError') {
-      throw new HttpError(502, '桌面微信没有提供可读取的聊天控件。可以先开启 Windows「讲述人」，再退出并重新登录微信后重试。', 'WECHAT_UI_UNAVAILABLE');
+      throw new HttpError(502, '桌面微信没有提供可读取的聊天控件。请打开已登录的微信主窗口后重试。若窗口已打开，可能是当前桌面微信的自动化兼容问题。', 'WECHAT_UI_UNAVAILABLE');
     }
     if (payload.error_type === 'NotLoginError') {
       throw new HttpError(503, '请先登录桌面微信后重试。', 'WECHAT_LOGIN_REQUIRED');

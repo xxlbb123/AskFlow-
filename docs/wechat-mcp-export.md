@@ -20,6 +20,8 @@ WECHAT_MCP_ARGS=["-m","wechat_mcp"]
 
 Windows 微信在客户端内部保存本机消息。AskFlow 接入的 `wechat-mcp` 通过 Windows UI Automation 操作已登录的桌面微信，定位会话、回溯记录并读取界面中呈现的消息。历史覆盖取决于电脑微信可查看的记录。微信的本地存储格式由客户端管理，官方备份用于恢复或迁移。[Windows 微信消息数据库架构](https://developer.cloud.tencent.com/article/2088835) · [腾讯关于微信记录存储和备份的说明](https://static.www.tencent.com/uploads/2023/04/06/4d0834be27f876732f34898c44b1d714.pdf) · [社区工具实现](https://github.com/RungePei/wechat-mcp)
 
+读取历史和调用微信自带转写时，桌面微信需要已登录且界面可操作。聊天中出现待校对记录后，即可在微信退出的情况下继续校对和生成文档；生成时仍需要连通项目配置的模型服务。
+
 ## 把语音意见合进清单
 
 默认 Windows 配置会启动 AskFlow 的微信 MCP 适配器。它复用社区工具回溯记录，对时段内仍缺转写的语音尝试调用桌面微信的「语音转文字」菜单。微信返回的已有转写也会进入校对。界面无法提供转写的语音保留原发送时间，显示为「待转写语音」。
@@ -44,4 +46,4 @@ node --test backend/tests/wechat-chat.test.js
 npm run build
 ```
 
-测试通过真实 stdio 连接模拟微信 Server，使用合成文字、已转写语音和待转写语音验证校对、确认和导出。本机微信窗口若无法提供可访问性控件，可尝试开启 Windows「讲述人」后重新打开并登录微信。当前本机实测停在窗口控件识别。[社区兼容问题](https://github.com/Hello-Mr-Crab/pywechat/issues/270)
+测试通过真实 stdio 连接模拟微信 Server，使用合成文字、已转写语音和待转写语音验证校对、确认和导出。本机微信主窗口无法识别时，详见[真实环境的排查与验收记录](requirements-and-progress.md)。
