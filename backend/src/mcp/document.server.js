@@ -2,8 +2,9 @@ const { McpServer } = require('@modelcontextprotocol/server');
 const z = require('zod');
 const { HttpError } = require('../utils/http-error');
 const { isId } = require('../services/document.service');
+const { registerWechatExportTool } = require('./wechat.tool');
 
-function createDocumentMcpServer({ config, documentService, fileIds, scopeId }) {
+function createDocumentMcpServer({ config, documentService, fileIds, scopeId, arkClient }) {
   if (!isId(scopeId)) {
     throw new HttpError(400, '无效的会话附件标识', 'INVALID_DOCUMENT_SCOPE');
   }
@@ -149,6 +150,7 @@ function createDocumentMcpServer({ config, documentService, fileIds, scopeId }) 
     }
   });
 
+  registerWechatExportTool(server, { config, arkClient });
   return server;
 }
 
