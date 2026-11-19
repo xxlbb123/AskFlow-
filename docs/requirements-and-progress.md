@@ -37,6 +37,8 @@
 - 已试。当前版本为微信 `4.2.0.52`、`pywechat127 1.9.8`、`pywinauto 0.6.9`。恢复窗口、切到前台和临时开启 Windows「讲述人」后，原窗口仍只暴露 `Qt51514QWindowIcon` 和 `MMUIRenderSubWindow` 等通用节点。Windows UI Automation 的控件视图和原始视图结果一致。[Windows 讲述人说明](https://support.microsoft.com/zh-cn/accessibility/windows/narrator/chapter-1-introducing-narrator)
 - 登录误判。关闭原微信窗口后进程仍在。重新启动产生了另一个登录窗口，工具一度返回 `WECHAT_LOGIN_REQUIRED`。关闭测试登录窗及「讲述人」后，按上游新版的规则枚举同类窗口，只发现一个原微信外层窗口，未找到 `mmui::MainWindow`。原窗口实测仍返回 `WECHAT_UI_UNAVAILABLE`，应用提示已区分界面兼容问题和需要登录。
 - 社区对照。上游在微信 `4.1.10.31` 报告过原生 Windows UI Automation 也只见外层窗口，`4.1.11` 同样有人报告开启讲述人仍失败。上游新版会枚举同类窗口并筛选 `mmui` 控件，该改动仍依赖微信提供内部控件。社区尝试的讲述人和关闭 GPU 渲染效果因环境而异，目前没有适用于本机 `4.2.0.52` 的已验证方案。[上游同症状报告](https://github.com/Hello-Mr-Crab/pywechat/issues/270) · [讲述人复试记录](https://github.com/Hello-Mr-Crab/pywechat/issues/283) · [其他环境的复试记录](https://github.com/Hello-Mr-Crab/pywechat/issues/264) · [新版窗口查找实现](https://github.com/Hello-Mr-Crab/pywechat/blob/main/src/pyweixin/WeChatTools.py)
+- 调用层和控件接口复测。直接执行 `pyweixin.Navigator.open_weixin()`，跳过 AskFlow 和 MCP，仍返回 `NotFoundError`。通过 Windows 的 MSAA 接口检查同一窗口，外层有一个可访问子节点，原生渲染窗口没有可访问子节点。转用同一库的普通脚本或切换到 MSAA 均未恢复会话控件。[MSAA 接口说明](https://learn.microsoft.com/windows/win32/winauto/retrieving-an-iaccessible-object)
+- 版本对照。`wechat-mcp` 作者公开记录的实测版本为 Windows 11 上的 `4.1.15.56`。社区报告 `4.1.9.30` 可用，`4.1.9.57` 有不同结果，维护者已收到 `4.2` 报错但尚未确认与本机同因。若复测版本，应在独立环境用同一账号验证，先检查聊天控件，再复测指定的一分钟；本机尚未做此对照。[工具实测环境](https://github.com/RungePei/wechat-mcp) · [4.1 对照报告](https://github.com/Hello-Mr-Crab/pywechat/issues/256) · [4.2 上游报告](https://github.com/Hello-Mr-Crab/pywechat/issues/305)
 - 验收条件。先在 Windows 可访问性树中确认聊天列表或搜索框可定位，再用已授权的同一分钟验证真实消息、原发送时间及语音转写进入聊天内校对。校对后的正文只在用户确认后进入文档整理。仓库问题记录中省略联系人名和聊天原文。
 
 ## 相关需求备忘
