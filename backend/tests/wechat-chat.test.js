@@ -10,6 +10,7 @@ const { createApp } = require('../src/app');
 const { createConfig } = require('../src/config/env');
 
 const wordRequest = '整理我跟王老师 2026 年 11 月 3 日 10 点到 10 点半的微信聊天记录里的论文意见，导出 Word。';
+const unavailableRequest = '整理无障碍测试会话 11 月 3 日 10 点到 10 点半的微信聊天记录。';
 const incompleteRequest = '把和王老师的微信聊天整理成 Markdown';
 const supplement = '2026 年 11 月 3 日上午 10 点到 10 点半';
 const quote = '表 2 要补充标准差。';
@@ -48,6 +49,9 @@ test('main chat reads and transcribes, shows records for editing, then generates
       assert.deepEqual(payload.tools.map(entry => entry.function.name), ['exportWechatRevisionChecklist', 'askForWechatExportDetails']);
       if (latest === '微信的历史工具是怎么工作的？') return modelReply({ content: '这里是在问工作方式。' });
       if (latest === incompleteRequest) return tool('askForWechatExportDetails', { missing: ['time'] });
+      if (latest === unavailableRequest) return tool('exportWechatRevisionChecklist', {
+        contact: '无障碍测试会话', from: '2026-11-03T10:00', to: '2026-11-03T10:30'
+      });
       if (latest === supplement) {
         assert.equal(payload.messages[1].content, incompleteRequest);
         assert.match(payload.messages[2].content, /请补充微信整理条件/);
@@ -121,6 +125,9 @@ test('main chat reads and transcribes, shows records for editing, then generates
   assert.equal(extracts, 0);
   const unconfigured = await start();
   assert.match(textOf(await send([user(wordRequest)], { host: unconfigured })), /WECHAT_MCP_COMMAND/);
+  const unavailable = await send([user(unavailableRequest)]);
+  assert.match(textOf(unavailable), /可读取的聊天控件.*讲述人/);
+  assert.ok(unavailable.every(event => !['wechat-review', 'download'].includes(event.type)));
   assert.equal(extracts, 0);
 
   const wordReviewEvents = await send([user(wordRequest)]);

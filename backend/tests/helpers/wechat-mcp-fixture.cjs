@@ -22,6 +22,9 @@ const daily = {
 };
 const fixture = new McpServer({ name: 'wechat-mcp-test-fixture', version: '1.0.0' });
 function history({ to_user, target_date, from_minute, to_minute }) {
+  if (to_user === '无障碍测试会话') {
+    return { structuredContent: { status: 'error', error_type: 'NotFoundError' }, content: [] };
+  }
   assert.equal(to_user, '王老师');
   assert.ok(Object.hasOwn(daily, target_date));
   const records = daily[target_date].map(([clock, text, type]) => {

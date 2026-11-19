@@ -18,6 +18,8 @@ WECHAT_MCP_ARGS=["-m","wechat_mcp"]
 
 前后端均在本机打开。每次可以选择最多 31 个日历日，带日期无时刻时包含该日 00:00 到 23:59。历史工具通过桌面微信界面回溯。[社区历史工具的实现](https://github.com/RungePei/wechat-mcp/blob/main/src/wechat_mcp/wechat_client.py)
 
+Windows 微信在客户端内部保存本机消息。AskFlow 接入的 `wechat-mcp` 通过 Windows UI Automation 操作已登录的桌面微信，定位会话、回溯记录并读取界面中呈现的消息。历史覆盖取决于电脑微信可查看的记录。微信的本地存储格式由客户端管理，官方备份用于恢复或迁移。[Windows 微信消息数据库架构](https://developer.cloud.tencent.com/article/2088835) · [腾讯关于微信记录存储和备份的说明](https://static.www.tencent.com/uploads/2023/04/06/4d0834be27f876732f34898c44b1d714.pdf) · [社区工具实现](https://github.com/RungePei/wechat-mcp)
+
 ## 把语音意见合进清单
 
 默认 Windows 配置会启动 AskFlow 的微信 MCP 适配器。它复用社区工具回溯记录，对时段内仍缺转写的语音尝试调用桌面微信的「语音转文字」菜单。微信返回的已有转写也会进入校对。界面无法提供转写的语音保留原发送时间，显示为「待转写语音」。
