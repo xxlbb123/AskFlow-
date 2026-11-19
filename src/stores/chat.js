@@ -240,6 +240,10 @@ export const useChatStore = defineStore('chat', () => {
         onStatus: (status) => {
           if (!controller.signal.aborted) session.generationStatus = status
         },
+        onDownload: (file) => {
+          const reply = session.messages.find(message => message.id === replyId)
+          if (reply && !controller.signal.aborted) reply.download = file
+        },
         onDelta: (delta) => {
           // 始终按发起请求时的 ID 更新，用户切换会话也不会串消息。
           const target = sessions.value.find(item => item.id === sessionId)

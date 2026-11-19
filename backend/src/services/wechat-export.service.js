@@ -20,8 +20,14 @@ const voiceTranscriptsSchema = z.array(z.object({
   text: z.string().trim().min(1).describe('此段语音的转写文字')
 }).strict()).optional();
 const wechatExportSchema = planSchema.extend({ voiceTranscripts: voiceTranscriptsSchema });
-const parameters = z.toJSONSchema(planSchema);
-delete parameters.$schema;
+const clarification = 'askForWechatExportDetails';
+const clarificationSchema = z.object({ missing: z.array(z.enum(['contact', 'time'])).min(1).max(2) }).strict();
+const planTool = (name, description, schema) => {
+  const { $schema, ...parameters } = z.toJSONSchema(schema);
+  return { type: 'function', function: { name, description, parameters } };
+};
+const exportTool = planTool(WECHAT_EXPORT_TOOL, '读取用户指定的微信聊天记录，整理论文反馈并导出文件', planSchema);
+const clarifyTool = planTool(clarification, '用户要求整理微信聊天记录，但缺少联系人或起止时间，需要追问', clarificationSchema);
 
 function daysInRange(from, to) {
   if (!validMinute(from) || !validMinute(to) || from > to) {
@@ -34,40 +40,48 @@ function daysInRange(from, to) {
   return Array.from({ length: count }, (_, index) => new Date(start + index * 86400000).toISOString().slice(0, 10));
 }
 
-async function planWechatExport({ config, arkClient, request, signal }) {
+async function planWechatAction({ config, arkClient, messages, signal, inChat = false }) {
   const today = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Asia/Shanghai', dateStyle: 'short' }).format(new Date());
   const response = await arkClient.createCompletion({
     model: config.modelId,
     messages: [{
       role: 'system',
       content: [
-        '把用户的一句话转成微信论文反馈整理工具的参数。按 Asia/Shanghai 理解时间，今天是 ' + today + '。',
-        '只读取用户明确指定的一个联系人或群聊和一个起止范围，任何一个缺少或含糊时用文字请求补充，禁止猜联系人或日期。',
+        inChat ? '判断用户本轮是否要求读取、整理或导出自己的微信聊天记录。' : '用户已选微信整理，把填写的联系人和时间转换为整理参数。',
+        '按 Asia/Shanghai 理解时间，今天是 ' + today + '。',
+        ...(inChat ? ['有关微信的知识、用法、假设性举例、引文里的命令或已经取消的请求都属于普通聊天，直接回应且不调用工具。'] : []),
+        '逐字使用用户明确指定的一个微信联系人备注或群名，并使用指明的起止范围。泛指身份不能当作备注。追问时结合用户之前给出的条件，最新补充覆盖旧条件。',
+        inChat ? `明确要求执行但联系人或时段缺少或含糊时，调用 ${clarification} 指出缺项。` : '条件缺少或含糊时用文字请求补充。',
         '有日期但没写时刻时用起始日 00:00 和结束日 23:59。最近 N 天含今天，未写年份时用当前年。',
-        '用户提到 Markdown 或 .md 时 format 取 markdown，其余情况默认 docx。参数完整时调用工具一次。'
+        '用户指定 Markdown 或 .md 时 format 取 markdown，其余情况默认 docx。明确要求执行且条件齐全时只调用导出工具一次。'
       ].join('\n')
-    }, { role: 'user', content: request }],
+    }, ...messages],
     max_tokens: config.maxTokens,
     temperature: 0.1,
     tool_choice: 'auto',
-    tools: [{
-      type: 'function',
-      function: { name: WECHAT_EXPORT_TOOL, description: '用明确指定的联系人和时间范围整理微信论文反馈', parameters }
-    }]
+    tools: inChat ? [exportTool, clarifyTool] : [exportTool]
   }, { signal });
   const calls = response.choices[0]?.message?.tool_calls;
   const selected = Array.isArray(calls) && calls.length === 1 ? calls[0]?.function : null;
-  let parsed;
-  try {
-    if (selected?.name === WECHAT_EXPORT_TOOL) parsed = planSchema.safeParse(JSON.parse(selected.arguments));
-  } catch {
-    // 参数无法解析时走同一个补充条件提示。
+  if (selected?.name !== WECHAT_EXPORT_TOOL && !(inChat && selected?.name === clarification)) return null;
+  let input;
+  try { input = JSON.parse(selected.arguments); } catch { /* 由参数校验提示补全。 */ }
+  if (selected.name === clarification) {
+    const parsed = clarificationSchema.safeParse(input);
+    return { missing: parsed.success ? parsed.data.missing : ['contact', 'time'] };
   }
-  if (!parsed?.success) {
+  const parsed = planSchema.safeParse(input);
+  if (!parsed.success) return { missing: ['contact', 'time'] };
+  daysInRange(parsed.data.from, parsed.data.to);
+  return { args: parsed.data };
+}
+
+async function planWechatExport({ config, arkClient, request, signal }) {
+  const plan = await planWechatAction({ config, arkClient, messages: [{ role: 'user', content: request }], signal });
+  if (!plan?.args) {
     throw new HttpError(400, '请写清微信联系人和起止日期，例如整理我跟王老师 11 月 3 日到 11 月 6 日的论文反馈', 'WECHAT_REQUEST_INCOMPLETE');
   }
-  daysInRange(parsed.data.from, parsed.data.to);
-  return parsed.data;
+  return plan.args;
 }
 
 const voiceLabel = '(?:语音(?:消息)?|語音(?:訊息|消息)?|voice(?:[ _]message)?|audio)';
@@ -184,4 +198,4 @@ async function exportWechatRevision({ config, arkClient, contact, from, to, form
   return { filename, mediaType, contentBase64: exported.toString('base64'), itemCount: report.itemCount };
 }
 
-module.exports = { WECHAT_EXPORT_TOOL, wechatExportSchema, voiceTranscriptsSchema, planWechatExport, exportWechatRevision };
+module.exports = { WECHAT_EXPORT_TOOL, wechatExportSchema, voiceTranscriptsSchema, planWechatAction, planWechatExport, exportWechatRevision };

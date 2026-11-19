@@ -1,3 +1,6 @@
+import { apiBase } from './api.js'
+import { readWechatDownload } from './wechat.js'
+
 const createChatError = (payload, fallback = '聊天接口请求失败') => {
   const error = payload?.error ?? payload
   if (error?.code === 'InvalidEndpoint.ClosedEndpoint') {
@@ -7,12 +10,12 @@ const createChatError = (payload, fallback = '聊天接口请求失败') => {
 }
 
 // 请求层只负责 HTTP 请求与流式解析，通过 onDelta 把新增文字交给 Store。
-export async function streamChat({ messages, fileIds, scopeId, signal, onDelta, onSources, onStatus }) {
+export async function streamChat({ messages, fileIds, scopeId, signal, onDelta, onSources, onStatus, onDownload }) {
   let reader // 保存响应数据的读取器，finally 中也需要使用。
 
   try {
     // 这里使用fetch来发出请求
-    const response = await fetch('http://localhost:3000/api/chat', {
+    const response = await fetch(`${apiBase}/api/chat`, {
       method: 'POST',
       signal, // 接收 AbortController 发出的取消通知。
       headers: { 'Content-Type': 'application/json' },//告诉后端，请求体使用JSON格式
@@ -54,6 +57,10 @@ export async function streamChat({ messages, fileIds, scopeId, signal, onDelta, 
       if (json.error) throw createChatError(json)
       if (json.type === 'sources' && Array.isArray(json.sources)) onSources?.(json.sources, json.mode)
       if (json.type === 'status' && typeof json.message === 'string') onStatus?.(json.message)
+      if (json.type === 'download') {
+        const file = readWechatDownload(json.file)
+        if (file) onDownload?.(file)
+      }
       const choice = json.choices?.[0]
       if (typeof choice?.finish_reason === 'string') finishReason = choice.finish_reason
       if (!hasReplyText && choice?.delta?.reasoning_content) onStatus?.('正在思考…')

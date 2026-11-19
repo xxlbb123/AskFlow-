@@ -1,6 +1,7 @@
 const { once } = require('node:events');
 const { HttpError } = require('../utils/http-error');
 const { isId } = require('../services/document.service');
+const { isLocalRequest } = require('../utils/local-request');
 
 function readMessages(req) {
   if (!req.is('application/json')) {
@@ -36,17 +37,23 @@ function createChatController({ config, chatService }) {
       }
     };
     res.once('close', onClose);
-    const timer = setTimeout(() => {
-      controller.abort(new HttpError(504, 'AI 服务请求超时，请稍后重试', 'UPSTREAM_TIMEOUT'));
-    }, config.requestTimeoutMs);
-    timer.unref();
+    let timer;
+    function setDeadline(timeoutMs, error) {
+      clearTimeout(timer);
+      timer = setTimeout(() => controller.abort(error), timeoutMs);
+      timer.unref();
+    }
+    setDeadline(config.requestTimeoutMs, new HttpError(504, 'AI 服务请求超时，请稍后重试', 'UPSTREAM_TIMEOUT'));
 
     try {
       // 先确认上游成功，再发送 SSE 响应头，避免把 HTTP 错误伪装成成功的流。
-      const { body, sources, documentMode } = await chatService.openStream(messages, {
-        signal: controller.signal, fileIds, scopeId
+      const { body, sources, documentMode, wechatExport } = await chatService.openStream(messages, {
+        signal: controller.signal, fileIds, scopeId, allowWechat: isLocalRequest(req)
       });
       controller.signal.throwIfAborted();
+      if (wechatExport) {
+        setDeadline(config.fileProcessingTimeoutMs, new HttpError(504, '微信整理超时，请缩小日期范围后重试', 'WECHAT_EXPORT_TIMEOUT'));
+      }
       res.status(200).set({
         'Content-Type': 'text/event-stream; charset=utf-8',
         'Cache-Control': 'no-cache',
