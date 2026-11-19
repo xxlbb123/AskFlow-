@@ -1,10 +1,10 @@
 const apiBase = import.meta.env?.VITE_API_BASE_URL || 'http://localhost:3000'
 
-export async function exportWechatChecklist(request, signal) {
+export async function exportWechatChecklist(request, voiceTranscripts, signal) {
   const response = await fetch(`${apiBase}/api/wechat/revision-checklist`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ request }),
+    body: JSON.stringify({ request, voiceTranscripts }),
     signal
   })
   if (!response.ok) {

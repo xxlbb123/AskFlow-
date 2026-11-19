@@ -10,7 +10,7 @@ function paragraph(text, { size = 22, bold = false, ...options } = {}) {
   });
 }
 
-function packRevisionDocx({ title, metadata, sections, lines }) {
+function packRevisionDocx({ title, metadata, sections, evidenceLocation }) {
   const children = [
     paragraph(title, { heading: HeadingLevel.TITLE, size: 46, bold: true, spacing: { after: 250 } }),
     ...metadata.map(text => paragraph(text, { spacing: { after: 100, line: 340 } }))
@@ -25,10 +25,7 @@ function packRevisionDocx({ title, metadata, sections, lines }) {
         bold: true, keepNext: task.evidence.length > 0, spacing: { before: 140, after: 100, line: 360 }
       }));
       for (const item of task.evidence) {
-        const time = lines[item.startLine - 1]?.slice(0, 16);
-        const position = item.startLine === item.endLine ? '第 ' + item.startLine + ' 条' :
-          '第 ' + item.startLine + ' 至 ' + item.endLine + ' 条';
-        children.push(paragraph((time ? time + ' · ' : '') + position + '　“' + item.quote + '”', {
+        children.push(paragraph(evidenceLocation(item) + '　“' + item.quote + '”', {
           size: 20, indent: { left: 360 }, spacing: { after: 120, line: 340 }
         }));
       }

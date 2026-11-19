@@ -2,7 +2,7 @@ const { randomUUID } = require('node:crypto');
 const express = require('express');
 const { HttpError } = require('../utils/http-error');
 const { openDocumentMcp } = require('../mcp/document.client');
-const { WECHAT_EXPORT_TOOL, planWechatExport } = require('../services/wechat-export.service');
+const { WECHAT_EXPORT_TOOL, voiceTranscriptsSchema, planWechatExport } = require('../services/wechat-export.service');
 
 const localHosts = new Set(['localhost', '127.0.0.1', '::1', '[::1]']);
 const localAddresses = new Set(['127.0.0.1', '::1', '::ffff:127.0.0.1']);
@@ -33,6 +33,11 @@ function createWechatRouter({ config, documentService, arkClient }) {
       throw new HttpError(400, '请输入一句不超过 1200 字符的整理要求', 'INVALID_WECHAT_REQUEST');
     }
 
+    const voices = voiceTranscriptsSchema.safeParse(req.body.voiceTranscripts);
+    if (!voices.success) {
+      throw new HttpError(400, '请为每段语音填写有效的发送时间、发言人和转写文字', 'INVALID_VOICE_TRANSCRIPT');
+    }
+
     const disconnected = new AbortController();
     const timeout = AbortSignal.timeout(config.fileProcessingTimeoutMs);
     const signal = AbortSignal.any([disconnected.signal, timeout]);
@@ -47,7 +52,9 @@ function createWechatRouter({ config, documentService, arkClient }) {
         config, documentService, arkClient, scopeId: randomUUID(), fileIds: [], signal,
         timeoutMs: config.fileProcessingTimeoutMs
       });
-      const result = await connection.client.callTool({ name: WECHAT_EXPORT_TOOL, arguments: args }, {
+      const result = await connection.client.callTool({
+        name: WECHAT_EXPORT_TOOL, arguments: { ...args, voiceTranscripts: voices.data }
+      }, {
         signal, timeout: config.fileProcessingTimeoutMs
       });
       signal.throwIfAborted();
