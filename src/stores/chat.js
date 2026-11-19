@@ -1,7 +1,8 @@
-import { computed, onScopeDispose, ref } from 'vue'
+import { computed, onScopeDispose, ref, watch } from 'vue'
 import { defineStore } from 'pinia'
 import { streamChat } from '../services/chat.js'
 import { uploadFile, validateFile } from '../services/files.js'
+import { fetchWechatReview } from '../services/wechat.js'
 import { CHAT_STORAGE_KEY, chatStorage, chatHistorySerializer, chatStorageError as storageError } from '../utils/chat-storage.js'
 // 这里pinia使用了setup store写法
 export const useChatStore = defineStore('chat', () => {
@@ -25,6 +26,18 @@ export const useChatStore = defineStore('chat', () => {
   const activeSession = computed(() =>
     sessions.value.find(session => session.id === activeSessionId.value) ?? null
   )
+  const pendingReviewMessage = session => session?.messages.findLast(message => message.wechatReview?.status === 'pending')
+  watch(activeSession, async session => {
+    const message = pendingReviewMessage(session)
+    const reference = message?.wechatReview
+    if (!reference || reference.rows) return
+    try {
+      const review = await fetchWechatReview(session.documentScopeId, reference.id)
+      if (message.wechatReview === reference) message.wechatReview = review ?? { ...reference, status: 'expired' }
+    } catch {
+      if (message.wechatReview === reference) message.wechatReview = { ...reference, loadError: true }
+    }
+  }, { immediate: true })
   // 存储当前会话的消息数组
   const messages = computed(() => activeSession.value?.messages ?? [])
   const isGenerating = computed(() => activeSession.value?.isGenerating ?? false)
@@ -210,6 +223,11 @@ export const useChatStore = defineStore('chat', () => {
     const apiMessages = session.messages
       .filter(message => message.content)
       .map(({ role, content }) => ({ role, content }))
+    const pending = pendingReviewMessage(session)?.wechatReview
+    const wechatReview = pending?.rows && {
+      id: pending.id,
+      edits: pending.rows.filter(row => row.editedText !== row.text).map(row => ({ index: row.index, text: row.editedText }))
+    }
     const replyId = crypto.randomUUID()
     // 这里还是先创建一个空的AI消息，后续收到回复之后在持续追加进去
     session.messages.push({
@@ -232,6 +250,7 @@ export const useChatStore = defineStore('chat', () => {
         messages: apiMessages,
         fileIds: session.documents.map(file => file.id),
         scopeId: session.documentScopeId,
+        wechatReview,
         signal: controller.signal,
         onSources: (sources, mode) => {
           const reply = session.messages.find(message => message.id === replyId)
@@ -243,6 +262,17 @@ export const useChatStore = defineStore('chat', () => {
         onDownload: (file) => {
           const reply = session.messages.find(message => message.id === replyId)
           if (reply && !controller.signal.aborted) reply.download = file
+        },
+        onReview: (review) => {
+          const reply = session.messages.find(message => message.id === replyId)
+          if (!reply || controller.signal.aborted) return
+          const old = pendingReviewMessage(session)
+          if (old) old.wechatReview = { id: old.wechatReview.id, status: 'expired' }
+          reply.wechatReview = review
+        },
+        onReviewClosed: (id, status) => {
+          const previous = session.messages.find(message => message.wechatReview?.id === id)
+          if (previous && !controller.signal.aborted) previous.wechatReview = { id, status }
         },
         onDelta: (delta) => {
           // 始终按发起请求时的 ID 更新，用户切换会话也不会串消息。

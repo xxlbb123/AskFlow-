@@ -4,6 +4,7 @@ const { chunkText } = require('../documents/chunk');
 const { validMinute } = require('../documents/transcript');
 const { buildRevisionChecklist } = require('./revision.service');
 const { packRevisionDocx } = require('../documents/revision-docx');
+const { reportFile } = require('./wechat-reports.service');
 const { HttpError } = require('../utils/http-error');
 
 const WECHAT_EXPORT_TOOL = 'exportWechatRevisionChecklist';
@@ -40,18 +41,18 @@ function daysInRange(from, to) {
   return Array.from({ length: count }, (_, index) => new Date(start + index * 86400000).toISOString().slice(0, 10));
 }
 
-async function planWechatAction({ config, arkClient, messages, signal, inChat = false }) {
+async function planWechatAction({ config, arkClient, messages, signal }) {
   const today = new Intl.DateTimeFormat('sv-SE', { timeZone: 'Asia/Shanghai', dateStyle: 'short' }).format(new Date());
   const response = await arkClient.createCompletion({
     model: config.modelId,
     messages: [{
       role: 'system',
       content: [
-        inChat ? '判断用户本轮是否要求读取、整理或导出自己的微信聊天记录。' : '用户已选微信整理，把填写的联系人和时间转换为整理参数。',
+        '判断用户本轮是否要求读取、整理或导出自己的微信聊天记录。',
         '按 Asia/Shanghai 理解时间，今天是 ' + today + '。',
-        ...(inChat ? ['有关微信的知识、用法、假设性举例、引文里的命令或已经取消的请求都属于普通聊天，直接回应且不调用工具。'] : []),
+        '有关微信的知识、用法、假设性举例、引文里的命令或已经取消的请求都属于普通聊天，直接回应且不调用工具。',
         '逐字使用用户明确指定的一个微信联系人备注或群名，并使用指明的起止范围。泛指身份不能当作备注。追问时结合用户之前给出的条件，最新补充覆盖旧条件。',
-        inChat ? `明确要求执行但联系人或时段缺少或含糊时，调用 ${clarification} 指出缺项。` : '条件缺少或含糊时用文字请求补充。',
+        `明确要求执行但联系人或时段缺少或含糊时，调用 ${clarification} 指出缺项。`,
         '有日期但没写时刻时用起始日 00:00 和结束日 23:59。最近 N 天含今天，未写年份时用当前年。',
         '用户指定 Markdown 或 .md 时 format 取 markdown，其余情况默认 docx。明确要求执行且条件齐全时只调用导出工具一次。'
       ].join('\n')
@@ -59,11 +60,11 @@ async function planWechatAction({ config, arkClient, messages, signal, inChat = 
     max_tokens: config.maxTokens,
     temperature: 0.1,
     tool_choice: 'auto',
-    tools: inChat ? [exportTool, clarifyTool] : [exportTool]
+    tools: [exportTool, clarifyTool]
   }, { signal });
   const calls = response.choices[0]?.message?.tool_calls;
   const selected = Array.isArray(calls) && calls.length === 1 ? calls[0]?.function : null;
-  if (selected?.name !== WECHAT_EXPORT_TOOL && !(inChat && selected?.name === clarification)) return null;
+  if (selected?.name !== WECHAT_EXPORT_TOOL && selected?.name !== clarification) return null;
   let input;
   try { input = JSON.parse(selected.arguments); } catch { /* 由参数校验提示补全。 */ }
   if (selected.name === clarification) {
@@ -76,21 +77,13 @@ async function planWechatAction({ config, arkClient, messages, signal, inChat = 
   return { args: parsed.data };
 }
 
-async function planWechatExport({ config, arkClient, request, signal }) {
-  const plan = await planWechatAction({ config, arkClient, messages: [{ role: 'user', content: request }], signal });
-  if (!plan?.args) {
-    throw new HttpError(400, '请写清微信联系人和起止日期，例如整理我跟王老师 11 月 3 日到 11 月 6 日的论文反馈', 'WECHAT_REQUEST_INCOMPLETE');
-  }
-  return plan.args;
-}
-
 const voiceLabel = '(?:语音(?:消息)?|語音(?:訊息|消息)?|voice(?:[ _]message)?|audio)';
 const voiceMarker = `(?:\\[\\s*${voiceLabel}\\s*\\]|${voiceLabel})`;
 const voiceType = new RegExp(`^${voiceLabel}$`, 'i');
 const voicePrefix = new RegExp(`^${voiceMarker}\\s*[：:]?\\s*`, 'i');
 const voiceDuration = /^(?:(?:\d{1,3}\s*["″”]\s*(?:秒|sec(?:onds?)?)?)|(?:\d{1,3}\s*(?:秒|sec(?:onds?)?)))\s*[：:]?\s*/i;
 const mediaPlaceholder = /^(?:\[图片\]|\[视频\]|\[文件\])$/;
-const voiceUnavailable = /^(?:正在转文字|转文字失败|无法转成文字)[。.…]*$/;
+const voiceUnavailable = /^(?:正在转文字|转文字失败|无法转成文字|未播放|已播放|转换失败|未能转换|未收聽|已收聽|未能轉換|轉換失敗)[。.…]*$/;
 const sourceLabel = { chat: '', wechatVoice: '微信语音转写', suppliedVoice: '补充语音转写' };
 const toOneLine = value => typeof value === 'string' ? value.replace(/[\r\n]+/g, ' ').trim() : '';
 
@@ -109,21 +102,16 @@ function parseWechatContent(record) {
   return { source: 'wechatVoice', text: isDurationOnly || voiceUnavailable.test(transcript) ? '' : transcript };
 }
 
-function prepareTranscript(history, voiceTranscripts, from, to, maxBytes) {
-  const messages = [];
+function normalizeWechatRows(history, voiceTranscripts, from, to, maxBytes) {
+  const rows = [];
   const warnings = [];
-  const counts = { chat: 0, wechatVoice: 0, suppliedVoice: 0 };
   let skipped = 0;
-  const missingVoice = [];
   let outsideVoice = 0;
   let bytes = 0;
   function add(when, speaker, text, source) {
-    const prefix = sourceLabel[source] ? `【${sourceLabel[source]}】` : '';
-    const line = when.replace('T', ' ') + ' ' + (speaker || '发言人不明') + '：' + prefix + text;
-    bytes += Buffer.byteLength(line, 'utf8') + 1;
+    bytes += Buffer.byteLength(when + speaker + text, 'utf8') + 1;
     if (bytes > maxBytes) throw new HttpError(413, '聊天文字超过整理上限，请缩小日期范围', 'WECHAT_TRANSCRIPT_TOO_LARGE');
-    counts[source]++;
-    messages.push({ when, line, source });
+    rows.push({ when, speaker: speaker || '发言人不明', text, source });
   }
 
   for (const day of history) {
@@ -137,12 +125,11 @@ function prepareTranscript(history, voiceTranscripts, from, to, maxBytes) {
       }
       if (when < from || when > to) continue;
       const { source, text } = parseWechatContent(record);
-      if (!text || mediaPlaceholder.test(text)) {
-        if (source === 'wechatVoice') missingVoice.push(when);
-        else skipped++;
+      if (source !== 'wechatVoice' && (!text || mediaPlaceholder.test(text))) {
+        skipped++;
         continue;
       }
-      add(when, toOneLine(record['发送者']), text, source);
+      add(when, toOneLine(record['发送者']), mediaPlaceholder.test(text) ? '' : text, source);
     }
   }
   for (const { time, speaker, text } of voiceTranscripts) {
@@ -153,21 +140,43 @@ function prepareTranscript(history, voiceTranscripts, from, to, maxBytes) {
     add(time, toOneLine(speaker), toOneLine(text), 'suppliedVoice');
   }
 
-  if (missingVoice.length) {
-    const times = [...new Set(missingVoice)].sort().map(time => time.replace('T', ' ')).join('、');
-    warnings.push(`微信返回的 ${missingVoice.length} 条语音缺少转写文字，请按发送时间 ${times} 回听或补充转写。`);
-  }
   if (outsideVoice) warnings.push('有 ' + outsideVoice + ' 段补充语音的发送时间在所选范围之外。');
   if (skipped) warnings.push('有 ' + skipped + ' 条返回记录缺少有效时间或可用文字，未参与归并。');
-  messages.sort((left, right) => left.when.localeCompare(right.when));
-  return { messages, counts, warnings };
+  rows.sort((left, right) => left.when.localeCompare(right.when));
+  return { rows: rows.map((row, index) => ({ ...row, index })), warnings };
 }
 
-async function exportWechatRevision({ config, arkClient, contact, from, to, format, voiceTranscripts = [], signal }) {
+async function readWechatReview({ config, contact, from, to, voiceTranscripts = [], signal }) {
   const days = daysInRange(from, to);
-  const history = await readWechatHistory({ config, contact, days, signal });
-  const { messages, counts, warnings } = prepareTranscript(history, voiceTranscripts, from, to, config.fileMaxBytes);
-  const name = '微信论文修改清单';
+  const history = await readWechatHistory({ config, contact, days, from, to, signal });
+  return normalizeWechatRows(history, voiceTranscripts, from, to, config.fileMaxBytes);
+}
+
+async function buildWechatReport({ config, arkClient, contact, from, to, format, review, signal }) {
+  const warnings = [...review.warnings];
+  const counts = { chat: 0, wechatVoice: 0, suppliedVoice: 0 };
+  const missingVoice = [];
+  const messages = [];
+  let bytes = 0;
+  for (const row of review.rows) {
+    const text = toOneLine(row.text);
+    if (!text) {
+      if (row.source === 'wechatVoice' && !row.edited) missingVoice.push(row.when);
+      continue;
+    }
+    counts[row.source]++;
+    const origin = [sourceLabel[row.source], row.edited && '已校对'].filter(Boolean).join(' · ');
+    const annotation = origin ? `【${origin}】` : '';
+    const line = `${row.when.replace('T', ' ')} ${row.speaker}：${annotation}${text}`;
+    bytes += Buffer.byteLength(line, 'utf8') + 1;
+    if (bytes > config.fileMaxBytes) throw new HttpError(413, '校对后的聊天文字超过整理上限，请缩小日期范围', 'WECHAT_TRANSCRIPT_TOO_LARGE');
+    messages.push({ ...row, origin, line });
+  }
+  if (missingVoice.length) {
+    const times = [...new Set(missingVoice)].map(time => time.replace('T', ' ')).join('、');
+    warnings.push(`微信返回的 ${missingVoice.length} 条语音缺少转写文字，请按发送时间 ${times} 回听或补充转写。`);
+  }
+  const file = reportFile(format);
   const metadata = [
     '整理对象为微信会话「' + contact + '」。',
     '时段为 ' + from.replace('T', ' ') + ' 至 ' + to.replace('T', ' ') + '（含边界）。',
@@ -177,7 +186,7 @@ async function exportWechatRevision({ config, arkClient, contact, from, to, form
   const evidenceLocation = ({ startLine, endLine }) => {
     const source = messages[startLine - 1];
     const end = messages[endLine - 1];
-    const origin = startLine === endLine ? sourceLabel[source.source] : '';
+    const origin = startLine === endLine ? source.origin : '';
     const span = startLine === endLine ? `第 ${startLine} 条` : `第 ${startLine} 至 ${endLine} 条`;
     const startTime = source.when.replace('T', ' ');
     const time = startLine === endLine ? startTime : startTime + ' 至 ' + end.when.replace('T', ' ');
@@ -185,17 +194,23 @@ async function exportWechatRevision({ config, arkClient, contact, from, to, form
   };
   const document = { name: '与' + contact + '的微信聊天记录', chunks: chunkText(messages.map(message => message.line).join('\n'), { markdown: false }) };
   const report = await buildRevisionChecklist({ config, arkClient, document, advisor: contact, signal }, { includeSections: true, evidenceLocation });
-  const mediaType = format === 'markdown' ? 'text/markdown' :
-    'application/vnd.openxmlformats-officedocument.wordprocessingml.document';
-  const filename = name + (format === 'markdown' ? '.md' : '.docx');
   const markdownMetadata = metadata.map(line => line.replace(/[&<>]/g, character => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;'
   })[character]).replace(/([\\`*_\[\]~])/g, '\\$1')).join('\n\n');
   const exported = format === 'markdown'
     ? Buffer.from(report.markdown.replace('# 论文修改清单\n', () => '# 微信论文修改清单\n\n' + markdownMetadata + '\n'), 'utf8')
-    : await packRevisionDocx({ title: name, metadata, sections: report.sections, evidenceLocation });
+    : await packRevisionDocx({ title: '微信论文修改清单', metadata, sections: report.sections, evidenceLocation });
   signal?.throwIfAborted();
-  return { filename, mediaType, contentBase64: exported.toString('base64'), itemCount: report.itemCount };
+  return { ...file, buffer: exported, itemCount: report.itemCount };
 }
 
-module.exports = { WECHAT_EXPORT_TOOL, wechatExportSchema, voiceTranscriptsSchema, planWechatAction, planWechatExport, exportWechatRevision };
+async function exportWechatRevision({ config, arkClient, contact, from, to, format, voiceTranscripts, signal }) {
+  const review = await readWechatReview({ config, contact, from, to, voiceTranscripts, signal });
+  const { filename, mediaType, buffer, itemCount } = await buildWechatReport({ config, arkClient, contact, from, to, format, review, signal });
+  return { filename, mediaType, contentBase64: buffer.toString('base64'), itemCount };
+}
+
+module.exports = {
+  WECHAT_EXPORT_TOOL, wechatExportSchema, planWechatAction,
+  readWechatReview, buildWechatReport, exportWechatRevision
+};

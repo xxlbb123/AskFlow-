@@ -108,12 +108,15 @@ onBeforeUnmount(() => cancelAnimationFrame(scrollFrame))
 //   数据变化后执行的函数,
 //   配置选项
 // )
-// 只有切换会话时重置；发送消息、流式追加和生成结束都尊重当前阅读位置。
+// 切换会话或收到微信校对结果时，显示当前需要处理的消息。
 watch(
-  () => [props.sessionId, props.messages.length, props.messages.at(-1)?.content, props.isGenerating],
+  () => {
+    const latest = props.messages.at(-1)
+    return [props.sessionId, props.messages.length, latest?.content, props.isGenerating, latest?.wechatReview?.id ?? latest?.download?.id]
+  },
   (current, previous) => {
-    // current、previous 分别是这四个值的新数组、旧数组，所以 current[0] 和 previous[0] 比较的是会话 ID。
-    if (current[0] !== previous[0]) {
+    const [session, , , , wechatResult] = current
+    if (session !== previous[0] || (wechatResult && wechatResult !== previous[4])) {
       isFollowingLatest.value = true
       lastScrollTop = scrollContainer()?.scrollTop ?? 0
     }
@@ -180,7 +183,7 @@ watch(
           @resize="scrollToBottom"
         >
           <div class="message-row">
-            <ChatMessageItem v-if="item.content" :key="item.id" :message="item" />
+            <ChatMessageItem v-if="item.content" :key="item.id" :message="item" :busy="isGenerating" />
             <div v-else-if="waitingForReply && index === messages.length - 1" class="thinking" role="status">
               <span class="thinking-dots" aria-hidden="true"><i></i><i></i><i></i></span>
               <span>{{ generationStatus || '正在思考…' }}</span>

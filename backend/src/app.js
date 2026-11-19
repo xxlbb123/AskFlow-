@@ -7,6 +7,7 @@ const { createChatRouter } = require('./routes/chat.routes');
 const { createDocumentService } = require('./services/document.service');
 const { createFileRouter } = require('./routes/file.routes');
 const { createWechatRouter } = require('./routes/wechat.routes');
+const { createWechatReviews } = require('./services/wechat-review.service');
 const { errorHandler, notFoundHandler } = require('./middleware/error-handler');
 
 // 创建应用和监听端口分开，测试时可以使用独立端口和模拟的 AI 服务。
@@ -14,7 +15,8 @@ function createApp({ config, fetchImpl = globalThis.fetch, embeddingClient = cre
   const app = express();
   const arkClient = createArkClient({ config, fetchImpl });
   const documentService = createDocumentService({ config, embeddingClient });
-  const chatService = createChatService({ config, arkClient, documentService });
+  const wechatReviews = createWechatReviews();
+  const chatService = createChatService({ config, arkClient, documentService, wechatReviews });
 
   app.disable('x-powered-by');
   app.use(cors({
@@ -28,7 +30,7 @@ function createApp({ config, fetchImpl = globalThis.fetch, embeddingClient = cre
     res.json({ status: 'ok', message: 'AI Chat API is running' });
   });
   app.use('/api/chat', createChatRouter({ config, chatService }));
-  app.use('/api/wechat', createWechatRouter({ config, documentService, arkClient }));
+  app.use('/api/wechat', createWechatRouter({ config, wechatReviews }));
   app.use('/api/files', createFileRouter({ config, documentService }));
 
   // 未匹配的接口和所有错误都在路由之后处理。

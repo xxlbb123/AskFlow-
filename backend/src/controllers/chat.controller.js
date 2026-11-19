@@ -30,6 +30,7 @@ function createChatController({ config, chatService }) {
     }
     const scopeId = req.body.scopeId;
     if (fileIds.length && !isId(scopeId)) throw new HttpError(400, '缺少有效的会话附件标识', 'INVALID_DOCUMENT_SCOPE');
+    const wechatReview = req.body.wechatReview;
     const controller = new AbortController(); //浏览器连接中断或者聊天请求超时时，取消后续模型请求和工具操作
     const onClose = () => {
       if (!res.writableFinished) {
@@ -47,11 +48,11 @@ function createChatController({ config, chatService }) {
 
     try {
       // 先确认上游成功，再发送 SSE 响应头，避免把 HTTP 错误伪装成成功的流。
-      const { body, sources, documentMode, wechatExport } = await chatService.openStream(messages, {
-        signal: controller.signal, fileIds, scopeId, allowWechat: isLocalRequest(req)
+      const { body, sources, documentMode, wechatWork } = await chatService.openStream(messages, {
+        signal: controller.signal, fileIds, scopeId, wechatReview, allowWechat: isLocalRequest(req)
       });
       controller.signal.throwIfAborted();
-      if (wechatExport) {
+      if (wechatWork) {
         setDeadline(config.fileProcessingTimeoutMs, new HttpError(504, '微信整理超时，请缩小日期范围后重试', 'WECHAT_EXPORT_TIMEOUT'));
       }
       res.status(200).set({

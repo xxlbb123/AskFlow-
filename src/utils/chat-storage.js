@@ -1,5 +1,5 @@
 import { ref } from 'vue'
-import { readWechatDownload } from '../services/wechat.js'
+import { readWechatDownload, wechatReviewMetadata } from '../services/wechat.js'
 
 export const CHAT_STORAGE_KEY = 'ai-chat-history-v1'
 export const chatStorageError = ref('')
@@ -23,11 +23,13 @@ function fileData(file, pending = false) {
 
 function assistantData(message) {
   const download = readWechatDownload(message.download)
+  const wechatReview = wechatReviewMetadata(message.wechatReview)
   return {
     sources: (Array.isArray(message.sources) ? message.sources : []).filter(source => source
       && Number.isInteger(source.index) && source.index > 0 && typeof source.text === 'string'),
     documentMode: ['full', 'retrieval'].includes(message.documentMode) ? message.documentMode : '',
-    ...(download && { download })
+    ...(download && { download }),
+    ...(wechatReview && { wechatReview })
   }
 }
 

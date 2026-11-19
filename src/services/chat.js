@@ -1,5 +1,5 @@
 import { apiBase } from './api.js'
-import { readWechatDownload } from './wechat.js'
+import { readWechatDownload, readWechatReview } from './wechat.js'
 
 const createChatError = (payload, fallback = '聊天接口请求失败') => {
   const error = payload?.error ?? payload
@@ -10,7 +10,7 @@ const createChatError = (payload, fallback = '聊天接口请求失败') => {
 }
 
 // 请求层只负责 HTTP 请求与流式解析，通过 onDelta 把新增文字交给 Store。
-export async function streamChat({ messages, fileIds, scopeId, signal, onDelta, onSources, onStatus, onDownload }) {
+export async function streamChat({ messages, fileIds, scopeId, wechatReview, signal, onDelta, onSources, onStatus, onDownload, onReview, onReviewClosed }) {
   let reader // 保存响应数据的读取器，finally 中也需要使用。
 
   try {
@@ -19,7 +19,7 @@ export async function streamChat({ messages, fileIds, scopeId, signal, onDelta, 
       method: 'POST',
       signal, // 接收 AbortController 发出的取消通知。
       headers: { 'Content-Type': 'application/json' },//告诉后端，请求体使用JSON格式
-      body: JSON.stringify({ messages, ...(fileIds?.length ? { fileIds, scopeId } : {}) })
+      body: JSON.stringify({ messages, scopeId, wechatReview, ...(fileIds?.length ? { fileIds } : {}) })
     })
     // 这里就是await fetch得到response时，AI的完整回复可能还没有生成完，后面还需要继续读取response.body
     if (!response.ok) {
@@ -60,6 +60,13 @@ export async function streamChat({ messages, fileIds, scopeId, signal, onDelta, 
       if (json.type === 'download') {
         const file = readWechatDownload(json.file)
         if (file) onDownload?.(file)
+      }
+      if (json.type === 'wechat-review') {
+        const review = readWechatReview(json.review)
+        if (review) onReview?.(review)
+      }
+      if (json.type === 'wechat-review-closed' && ['confirmed', 'expired'].includes(json.status)) {
+        onReviewClosed?.(json.id, json.status)
       }
       const choice = json.choices?.[0]
       if (typeof choice?.finish_reason === 'string') finishReason = choice.finish_reason

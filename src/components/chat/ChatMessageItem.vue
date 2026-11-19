@@ -5,9 +5,10 @@ import MarkdownContent from '../common/MarkdownContent.vue'
 import CopyButton from '../common/CopyButton.vue'
 import AttachmentList from './attachments/AttachmentList.vue'
 import SourceReferences from './attachments/SourceReferences.vue'
+import WechatReview from './WechatReview.vue'
 import { describeWechatDownload } from '../../services/wechat.js'
 
-const props = defineProps({ message: { type: Object, required: true } })
+const props = defineProps({ message: { type: Object, required: true }, busy: Boolean })
 const sourceReferences = ref(null)
 const download = computed(() => props.message.role === 'assistant' && describeWechatDownload(props.message.download))
 </script>
@@ -24,6 +25,7 @@ const download = computed(() => props.message.role === 'assistant' && describeWe
       <MarkdownContent v-else class="message-content" :content="message.content" :sources="message.sources"
         @select-source="sourceReferences?.openSource($event)" />
       <SourceReferences v-if="message.role === 'assistant'" ref="sourceReferences" :sources="message.sources" :mode="message.documentMode" />
+      <WechatReview v-if="message.wechatReview" :review="message.wechatReview" :busy="busy" />
       <a v-if="download" class="report-link" :href="download.href" target="_blank" rel="noopener" download>
         <el-icon><Download /></el-icon>{{ download.label }}
       </a>

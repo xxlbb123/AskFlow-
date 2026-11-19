@@ -2,7 +2,6 @@
 import { onMounted, ref } from 'vue'
 import { Top, Paperclip } from '@element-plus/icons-vue'
 import AttachmentList from './attachments/AttachmentList.vue'
-import WechatExport from './WechatExport.vue'
 
 const props = defineProps({
   modelValue: { type: String, default: '' },
@@ -72,7 +71,6 @@ onMounted(focus)
           <button class="attach-button" type="button" :disabled="isGenerating || !!referenceFile" aria-label="上传 TXT 或 MD 文件" title="TXT / MD · UTF-8 · 最大 2 MB；每个会话一个文件" @click="fileInput?.click()">
             <el-icon><Paperclip /></el-icon><span>附件</span>
           </button>
-          <WechatExport :draft="modelValue" :disabled="isGenerating" />
           <span class="composer-hint">{{ isGenerating ? 'AI 正在回复…' : !canSend ? '附件就绪后可发送' : 'Enter 发送 · Shift + Enter 换行' }}</span>
         </div>
         <!-- 这个natuve-type="submit"是HTML 按钮的行为，表示提交表单，把按钮设置成表单提交按钮，点击之后浏览器会触发所属form的submit事件-->
