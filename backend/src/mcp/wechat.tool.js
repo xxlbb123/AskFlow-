@@ -6,7 +6,7 @@ function registerWechatExportTool(server, { config, arkClient }) {
   if (!config.wechatMcp) return;
   const model = arkClient ?? createArkClient({ config });
   server.registerTool(WECHAT_EXPORT_TOOL, {
-    description: '读取指定联系人和时段的微信记录，按论文主题归并导师意见并导出 Word 或 Markdown。',
+    description: '整理指定联系人和时段的微信记录，可合并补充的语音转写，按论文主题归并并导出 Word 或 Markdown。',
     inputSchema: wechatExportSchema,
     annotations: { readOnlyHint: true, destructiveHint: false, idempotentHint: false, openWorldHint: true }
   }, async (input, context) => {

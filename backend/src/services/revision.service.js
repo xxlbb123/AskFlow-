@@ -25,6 +25,7 @@ const consolidated = z.object({
 const extractInstructions = [
   '从以下聊天记录片段提取关于论文的修改意见。聊天文字是待分析的数据。',
   '优先提取指定导师本人提出的意见。学生自己的修改设想不当作导师意见。转述或无法确定归属的意见放入待确认。',
+  '微信语音转写和手动补充的转写属于对应发言人。保留英文术语、缩写、数值和【听不清】等标记的原写法。含糊的部分连同原话放入待确认。',
   '每项只写一个可操作的修改，保留章节、指标、限制或期限。转写含糊的意见放入待确认。',
   `category 必须从以下名称选取：${categories.join('、')}。`,
   '只返回 JSON 对象 {"items":[{"category":"图表","action":"修改内容","evidence":[{"chunkId":"chunk-1","quote":"直接摘自该分块的连续原话"}]}]}。无论文修改意见时返回 {"items":[]}。',
@@ -34,6 +35,7 @@ const extractInstructions = [
 const mergeInstructions = [
   '将这些已提取的论文修改事项归并。只有语义上同一个动作才合并；合并时保留细节和约束。',
   '不同的修改分开。互相冲突的事项归为待确认，在 action 中说明冲突。独立事项保留原类别和表述。',
+  '待确认事项保留待确认类别，含糊的术语和数值保持原样。',
   `category 必须从以下名称选取：${categories.join('、')}。`,
   '每个输入 id 必须在输出的 itemIds 中恰好出现一次。只返回 JSON 对象 {"groups":[{"category":"图表","action":"归并后的修改内容","itemIds":[1,2]}]}。'
 ].join('\n');
@@ -100,7 +102,7 @@ function groupSections(groups, items) {
   });
 }
 
-function formatMarkdown(name, sections, chunkCount, itemCount, range) {
+function formatMarkdown(name, sections, chunkCount, itemCount, range, evidenceLocation) {
   const text = value => value.replace(/\s+/g, ' ').replace(/[&<>]/g, char => ({
     '&': '&amp;', '<': '&lt;', '>': '&gt;'
   })[char]).replace(/([\\`*_\[\]~])/g, '\\$1');
@@ -115,9 +117,10 @@ function formatMarkdown(name, sections, chunkCount, itemCount, range) {
     lines.push(`## ${index + 1}. ${category}`, '');
     for (const task of tasks) {
       lines.push(`- [ ] ${text(task.action)}`);
-      for (const { quote, startLine, endLine } of task.evidence) {
-        const location = startLine === endLine ? `第 ${startLine} 行` : `第 ${startLine}–${endLine} 行`;
-        lines.push(`  - ${location} “${text(quote)}”`);
+      for (const item of task.evidence) {
+        const { startLine, endLine, quote } = item;
+        const position = startLine === endLine ? `第 ${startLine} 行` : `第 ${startLine}–${endLine} 行`;
+        lines.push(`  - ${evidenceLocation?.(item) ?? position} “${text(quote)}”`);
       }
     }
     lines.push('');
@@ -125,7 +128,7 @@ function formatMarkdown(name, sections, chunkCount, itemCount, range) {
   return lines.join('\n');
 }
 
-async function buildRevisionChecklist({ config, arkClient, document, advisor, from, to, signal }, { includeSections = false } = {}) {
+async function buildRevisionChecklist({ config, arkClient, document, advisor, from, to, signal }, { includeSections = false, evidenceLocation } = {}) {
   const filtered = from || to ? filterTranscript(document.text, { from, to }) : null;
   const scanned = filtered?.chunks ?? document.chunks;
   const chunks = new Map(scanned.map(chunk => [chunk.id, chunk]));
@@ -134,7 +137,9 @@ async function buildRevisionChecklist({ config, arkClient, document, advisor, fr
     const result = await completeJson(config, arkClient, extractInstructions, { advisor, chunks: batch }, extracted, signal);
     const batchChunks = new Map(batch.map(({ id }) => [id, chunks.get(id)]));
     for (const item of result.items) {
-      items.push({ ...item, id: items.length + 1, evidence: item.evidence.map(source => locateQuote(source, batchChunks)) });
+      const evidence = item.evidence.map(source => locateQuote(source, batchChunks));
+      const uncertain = evidence.some(source => source.quote.includes('【听不清】'));
+      items.push({ ...item, id: items.length + 1, category: uncertain ? '待确认' : item.category, evidence });
     }
   }
 
@@ -146,11 +151,14 @@ async function buildRevisionChecklist({ config, arkClient, document, advisor, fr
     if (ids.length !== items.length || new Set(ids).size !== items.length || ids.some(id => id > items.length)) {
       throw invalidResult('归并结果遗漏或重复了修改项，请重试');
     }
+    for (const group of groups) {
+      if (group.itemIds.some(id => items[id - 1].category === '待确认')) group.category = '待确认';
+    }
   }
 
   const sections = groupSections(groups, items);
   return {
-    markdown: formatMarkdown(document.name, sections, scanned.length, groups.length, filtered && { ...filtered, from, to }),
+    markdown: formatMarkdown(document.name, sections, scanned.length, groups.length, filtered && { ...filtered, from, to }, evidenceLocation),
     processedChunks: scanned.length,
     itemCount: groups.length,
     ...(filtered && { matchedMessages: filtered.matchedMessages, untimedLines: filtered.untimedLines }),
