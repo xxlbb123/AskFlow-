@@ -74,6 +74,7 @@ npm run dev
 
 - [前端开发说明](docs/frontend.md)：组件职责、消息流转、样式约定、Markdown 与持久化。
 - [后端开发说明](backend/README.md)：代码结构、配置、HTTP 接口、向量检索与外部 MCP 接入。
+- [微信论文反馈一键导出](docs/wechat-mcp-export.md)
 
 ## 使用限制
 

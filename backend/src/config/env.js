@@ -11,6 +11,21 @@ function readInteger(env, name, fallback, min, max = Number.MAX_SAFE_INTEGER) {
   return value;
 }
 
+function readWechatMcp(env) {
+  const command = env.WECHAT_MCP_COMMAND?.trim();
+  if (!command) return undefined;
+  let args;
+  try {
+    args = JSON.parse(env.WECHAT_MCP_ARGS || '["-m","wechat_mcp"]');
+  } catch {
+    throw new Error('WECHAT_MCP_ARGS 必须是 JSON 字符串数组');
+  }
+  if (!Array.isArray(args) || args.some(arg => typeof arg !== 'string')) {
+    throw new Error('WECHAT_MCP_ARGS 必须是 JSON 字符串数组');
+  }
+  return { command, args };
+}
+
 function createConfig(env = process.env) {
   const apiKey = env.ARK_API_KEY?.trim();
   const modelId = env.ARK_MODEL_ID?.trim();
@@ -34,6 +49,7 @@ function createConfig(env = process.env) {
     port: readInteger(env, 'PORT', 3000, 0, 65535),
     apiKey,
     modelId,
+    wechatMcp: readWechatMcp(env),
     embeddingModelId: env.ARK_EMBEDDING_MODEL_ID?.trim() || 'doubao-embedding-vision-251215',
     embeddingDimensions,
     arkBaseUrl: baseUrl,
